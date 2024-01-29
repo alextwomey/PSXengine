@@ -1,0 +1,34 @@
+<!-- Defines the ISO project -->
+<iso_project image_name="psxeg.iso">
+
+    <!-- Defines the data track for this tutorial -->
+    <track type="data">
+
+        <!-- Specifies identifier strings such as volume label -->
+        <!-- System and application identifiers must be PLAYSTATION -->
+        <identifiers
+            system      ="PLAYSTATION"
+            application ="PLAYSTATION"
+            volume      ="PSXENGINE"
+            volume_set  ="PSXENGINE"
+            publisher   ="MOONRIVER"
+        />
+
+        <!-- Defines the directory tree of the data track -->
+        <directory_tree>
+
+            <!-- Specify files in the directory tree -->
+            <file name="system.cnf"      type="data" source="SYSTEM.CNF"/>
+            <file name="psxeg.ps-exe"    type="data" source="../psxeg.ps-exe"/>
+			<!-- Add your own files or folders here -->
+			<file name="YOSHI.TIM"	type="data"	source="../assets/YOSHI.TIM"/>
+			<file name="YOSHI.TMD"	type="data"	source="../assets/YOSHI.TMD"/>
+			<file name="GRID.TMD"	type="data"	source="../assets/GRID.TMD"/>
+            <!-- Place dummy sectors at the end -->
+            <dummy sectors="1024"/>
+
+        </directory_tree>
+
+    </track>
+
+</iso_project>
