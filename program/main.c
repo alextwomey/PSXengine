@@ -22,7 +22,7 @@ short db = 0;                      // index of which buffer is used, values 0, 1
 //Store all your CD Files Here
 //the number is how many files
 //you eventually want to load.
-long* cdData[3];
+long* cdData[4];
 
 // Define start address of allocated memory
 // Let's use an array so we don't have to worry about using a memory segment that's already in use.
@@ -58,18 +58,20 @@ void display(void)
 int main(void)
 {   
     // Init heap
-    InitHeap((u_long *)ramAddr, sizeof(ramAddr));
+    InitHeap3((u_long *)ramAddr, sizeof(ramAddr));
 
     // Init display
     init();          
     CdInit();
 
-    readFromCd("YOSHI.TIM",&cdData[0]);
-    readFromCd("GRID.TMD",&cdData[1]);
-    readFromCd("YOSHI.TMD",&cdData[2]);
+    readFromCd("\\YOSHI.TIM;1",&cdData[0]);
+    readFromCd("\\GRID.TMD;1",&cdData[1]);
+    readFromCd("\\YOSHI.TMD;1",&cdData[2]);
+    readFromCd("\\HELO.DAT;1",&cdData[3]);
 
-    for(int i = 0; i > sizeof(cdData);i++){
-            printf("cd data[%d]: %li",i,*cdData[i]);
+    printf("preparing print.\n");
+    for(int i = 0; i < sizeof(cdData);i++){
+            printf("cd data[%d]: %s. Location: %p\n",i,(char*)cdData[i],(char*)cdData[i]);
         }
     
 

@@ -21,8 +21,6 @@
 CdlFILE filePos = {0};
 //~ struct EXEC * exeStruct;
 static char * loadFile;
-// We could also set a memory address manually, but we have to make sure this won't get in the way of other routines.
-// void * ramAddr = (void *)0x80030D40; 
 // Load data to this buffer
 u_long * dataBuffer;              
 // Those are not strictly needed, but we'll use them to see the commands results.
@@ -41,7 +39,7 @@ void initCD(){
 }
 
 //Read from cd method
-void readFromCd(unsigned char* filePath, u_long** file){
+void readFromCd(unsigned char* filePath, long** file){
     #ifdef _release_
     // Set name of file to load
     // Name of file to load
@@ -50,17 +48,26 @@ void readFromCd(unsigned char* filePath, u_long** file){
     printf("Looking for file %s\n",loadFile);
     CdSearchFile( &filePos, loadFile);
     // Allocate memorys
-    dataBuffer = malloc( BtoS(filePos.size) * CD_SECTOR_SIZE );
-    // Issue  CdlSetloc CDROM command : Set the seek target position
-    // Beware of a misnomed 'sector' member in the CdlLOC struct that should really be named 'frame'.
-    // https://discord.com/channels/642647820683444236/663664210525290507/864912470996942910
+    printf("file size: %lu\n",filePos.size);
+    printf("file size in BtoS format: %lu\n",BtoS(filePos.size) * CD_SECTOR_SIZE );
+    printf("file name: %s\n",filePos.name);
+    dataBuffer = malloc3(BtoS(filePos.size) * CD_SECTOR_SIZE );
     CdControl(CdlSetloc, (u_char *)&filePos.pos, CtrlResult);
     // Read data and load it to dataBuffer
     CDreadOK = CdRead( (int)BtoS(filePos.size), (u_long *)dataBuffer, CdlModeSpeed );
+    if(CDreadOK == 1){
+        printf("its good \n");
+    }
+    else{printf("its bad\n");}
     // Wait for operation to complete
     CDreadResult = CdReadSync(0, 0);
-    *file = &dataBuffer;
-    free(dataBuffer);
+    if(CDreadResult == 0){
+        printf("read sync finished no sectors left\n");
+        *file = dataBuffer;
+        free(dataBuffer);
+    }else{
+        printf("read sync has %d sectors left\n",CDreadResult);
+    }
     
     #else
     //pcdrv
