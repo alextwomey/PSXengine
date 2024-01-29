@@ -1,127 +1,93 @@
+
+#include <sys/types.h>
+#include <stdio.h>
+#include <libgte.h>
 #include <libetc.h>
 #include <libgpu.h>
-#include <libgte.h>
-#include <stdlib.h>
+#include <libapi.h>
+#include "readFromCD.c"
 
-#define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
+#define VMODE 0                 // Video Mode : 0 : NTSC, 1: PAL
+#define SCREENXRES 320          // Screen width
+#define SCREENYRES 240 + (VMODE << 4)          // Screen height : If VMODE is 0 = 240, if VMODE is 1 = 256 
+#define CENTERX SCREENXRES/2    // Center of screen on x 
+#define CENTERY SCREENYRES/2    // Center of screen on y
+#define MARGINX 0                // margins for text display
+#define MARGINY 32
+#define FONTSIZE 8 * 7           // Text Field Height
+DISPENV disp[2];                 // Double buffered DISPENV and DRAWENV
+DRAWENV draw[2];
+short db = 0;                      // index of which buffer is used, values 0, 1
 
-#define OTSIZE 4096
-#define SCREEN_Z 512
-#define CUBESIZE 196
+// Define start address of allocated memory
+// Let's use an array so we don't have to worry about using a memory segment that's already in use.
+static unsigned char ramAddr[0x40000]; // https://discord.com/channels/642647820683444236/663664210525290507/864936962199781387
 
-typedef struct DB {
-    DRAWENV draw;
-    DISPENV disp;
-    u_long ot[OTSIZE];
-    POLY_F4 s[6];
-} DB;
-
-static SVECTOR cube_vertices[] = {
-    {-CUBESIZE / 2, -CUBESIZE / 2, -CUBESIZE / 2, 0}, {CUBESIZE / 2, -CUBESIZE / 2, -CUBESIZE / 2, 0},
-    {CUBESIZE / 2, CUBESIZE / 2, -CUBESIZE / 2, 0},   {-CUBESIZE / 2, CUBESIZE / 2, -CUBESIZE / 2, 0},
-    {-CUBESIZE / 2, -CUBESIZE / 2, CUBESIZE / 2, 0},  {CUBESIZE / 2, -CUBESIZE / 2, CUBESIZE / 2, 0},
-    {CUBESIZE / 2, CUBESIZE / 2, CUBESIZE / 2, 0},    {-CUBESIZE / 2, CUBESIZE / 2, CUBESIZE / 2, 0},
-};
-
-static int cube_indices[] = {
-    0, 1, 2, 3, 1, 5, 6, 2, 5, 4, 7, 6, 4, 0, 3, 7, 4, 5, 1, 0, 6, 7, 3, 2,
-};
-
-static void init_cube(DB *db, CVECTOR *col) {
-    size_t i;
-
-    for (i = 0; i < ARRAY_SIZE(db->s); ++i) {
-        SetPolyF4(&db->s[i]);
-        setRGB0(&db->s[i], col[i].r, col[i].g, col[i].b);
-    }
+void init(void)
+{
+    ResetGraph(0);                 // Initialize drawing engine with a complete reset (0)
+    SetDefDispEnv(&disp[0], 0, 0         , SCREENXRES, SCREENYRES);     // Set display area for both &disp[0] and &disp[1]
+    SetDefDispEnv(&disp[1], 0, SCREENYRES, SCREENXRES, SCREENYRES);     // &disp[0] is on top  of &disp[1]
+    SetDefDrawEnv(&draw[0], 0, SCREENYRES, SCREENXRES, SCREENYRES);     // Set draw for both &draw[0] and &draw[1]
+    SetDefDrawEnv(&draw[1], 0, 0         , SCREENXRES, SCREENYRES);     // &draw[0] is below &draw[1]
+    // Set video mode
+    if (VMODE){ SetVideoMode(MODE_PAL);}
+    SetDispMask(1);                 // Display on screen    
+    setRGB0(&draw[0], 255, 50, 50); // set color for first draw area
+    setRGB0(&draw[1], 255, 50, 50); // set color for second draw area
+    draw[0].isbg = 1;               // set mask for draw areas. 1 means repainting the area with the RGB color each frame 
+    draw[1].isbg = 1;
+    PutDispEnv(&disp[db]);          // set the disp and draw environnments
+    PutDrawEnv(&draw[db]);
+    FntLoad(960, 0);                // Load font to vram at 960,0(+128)
+    FntOpen(MARGINX, SCREENYRES - MARGINY - FONTSIZE, SCREENXRES - MARGINX * 2, FONTSIZE, 0, 280 ); // FntOpen(x, y, width, height,  black_bg, max. nbr. chars
 }
-
-static void add_cube(u_long *ot, POLY_F4 *s, MATRIX *transform) {
-    long p, otz, flg;
-    int nclip;
-    size_t i;
-
-    SetRotMatrix(transform);
-    SetTransMatrix(transform);
-
-    for (i = 0; i < ARRAY_SIZE(cube_indices); i += 4, ++s) {
-        nclip = RotAverageNclip4(&cube_vertices[cube_indices[i + 0]], &cube_vertices[cube_indices[i + 1]],
-                                 &cube_vertices[cube_indices[i + 2]], &cube_vertices[cube_indices[i + 3]],
-                                 (long *)&s->x0, (long *)&s->x1, (long *)&s->x3, (long *)&s->x2, &p, &otz, &flg);
-
-        if (nclip <= 0) continue;
-
-        if ((otz > 0) && (otz < OTSIZE)) AddPrim(&ot[otz], s);
-    }
+void display(void)
+{
+    DrawSync(0);                    // Wait for all drawing to terminate
+    VSync(0);                       // Wait for the next vertical blank
+    PutDispEnv(&disp[db]);          // set alternate disp and draw environnments
+    PutDrawEnv(&draw[db]);  
+    db = !db;                       // flip db value (0 or 1)
 }
+int main(void)
+{   
+    // Init display
+    init();          
+    // Init CD system
+    CdInit();
+    // Init heap
+    InitHeap((u_long *)ramAddr, sizeof(ramAddr));
+    // If the other method was chosen at l.39
+    // InitHeap((void *)0x80030D40, 0x40000);
+    // Set name of file to load
+    loadFile = "\\HELO.DAT;1";
+    // Get file position from filename
+    CdSearchFile( &filePos, loadFile);
+    // Allocate memory
+    dataBuffer = malloc( BtoS(filePos.size) * CD_SECTOR_SIZE );
+    // Issue  CdlSetloc CDROM command : Set the seek target position
+    // Beware of a misnomed 'sector' member in the CdlLOC struct that should really be named 'frame'.
+    // https://discord.com/channels/642647820683444236/663664210525290507/864912470996942910
+    CdControl(CdlSetloc, (u_char *)&filePos.pos, CtrlResult);
+    // Read data and load it to dataBuffer
+    CDreadOK = CdRead( (int)BtoS(filePos.size), (u_long *)dataBuffer, CdlModeSpeed );
+    // Wait for operation to complete
+    CDreadResult = CdReadSync(0, 0);
 
-int main(void) {
-    DB db[2];
-    DB *cdb;
-    SVECTOR rotation = {0};
-    VECTOR translation = {0, 0, (SCREEN_Z * 3) / 2, 0};
-    MATRIX transform;
-    CVECTOR col[6];
-    size_t i;
-
-    ResetGraph(0);
-    InitGeom();
-
-    SetGraphDebug(0);
-
-    FntLoad(960, 256);
-    SetDumpFnt(FntOpen(32, 32, 320, 64, 0, 512));
-
-    SetGeomOffset(320, 240);
-    SetGeomScreen(SCREEN_Z);
-
-    SetDefDrawEnv(&db[0].draw, 0, 0, 640, 480);
-    SetDefDrawEnv(&db[1].draw, 0, 0, 640, 480);
-    SetDefDispEnv(&db[0].disp, 0, 0, 640, 480);
-    SetDefDispEnv(&db[1].disp, 0, 0, 640, 480);
-
-    srand(0);
-
-    for (i = 0; i < ARRAY_SIZE(col); ++i) {
-        col[i].r = rand();
-        col[i].g = rand();
-        col[i].b = rand();
+    while (1)  // infinite loop
+    {   
+        // Print the content of the loaded file - See HELO.DAT
+        FntPrint("%s%d\n", (char *)dataBuffer, VSync(-1));
+        // Print heap and buffer addresses
+        FntPrint("Heap: %x - Buf: %x\n", ramAddr, dataBuffer);
+        // Print returned values
+        FntPrint("CdCtrl: %d\nRead  : %d %d\n", CtrlResult[0], CDreadOK, CDreadResult);
+        // Print filesize in bytes/sectors
+        FntPrint("Size: %dB sectors: %d", filePos.size, BtoS(filePos.size));
+        
+        FntFlush(-1);               // Draw print stream
+        display();                  // Execute display()
     }
-
-    init_cube(&db[0], col);
-    init_cube(&db[1], col);
-
-    SetDispMask(1);
-
-    PutDrawEnv(&db[0].draw);
-    PutDispEnv(&db[0].disp);
-
-    while (1) {
-        cdb = (cdb == &db[0]) ? &db[1] : &db[0];
-
-        rotation.vy += 16;
-        rotation.vz += 16;
-
-        RotMatrix(&rotation, &transform);
-        TransMatrix(&transform, &translation);
-
-        ClearOTagR(cdb->ot, OTSIZE);
-
-        FntPrint("Code compiled using Psy-Q libraries\n\n");
-        FntPrint("converted by psyq-obj-parser\n\n");
-        FntPrint("PCSX-Redux project\n\n");
-        FntPrint("https://bit.ly/pcsx-redux");
-
-        add_cube(cdb->ot, cdb->s, &transform);
-
-        DrawSync(0);
-        VSync(0);
-
-        ClearImage(&cdb->draw.clip, 60, 120, 120);
-
-        DrawOTag(&cdb->ot[OTSIZE - 1]);
-        FntFlush(-1);
-    }
-
     return 0;
-}
+    }

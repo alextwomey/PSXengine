@@ -13,7 +13,7 @@
             volume_set  ="PSXENGINE"
             publisher   ="MOONRIVER"
         />
-
+        <license file="LICENSEA.DAT"/>
         <!-- Defines the directory tree of the data track -->
         <directory_tree>
 
@@ -24,6 +24,7 @@
 			<file name="YOSHI.TIM"	type="data"	source="../assets/YOSHI.TIM"/>
 			<file name="YOSHI.TMD"	type="data"	source="../assets/YOSHI.TMD"/>
 			<file name="GRID.TMD"	type="data"	source="../assets/GRID.TMD"/>
+            <file name="HELO.DAT"	type="data"	source="../program/HELO.DAT"/>
             <!-- Place dummy sectors at the end -->
             <dummy sectors="1024"/>
 
