@@ -5,16 +5,20 @@
 #include <libcd.h>
 #include <malloc.h>
 #include <stdio.h>
+#include <STRINGS.H>
+#include"../third_party/pcdrv.h"
 //
 //**********************
 //Release def (switches cd read and pcdrv read)
 //**********************
-#define _release_
+//#define _release_
 //**********************
-
 
 // CD specifics
 #define CD_SECTOR_SIZE 2048
+#define FILEMODE_READONLY 0
+#define FILEMODE_WRITEONLY 1
+#define FILEMODE_READWRITE 2
 // Converting bytes to sectors SECTOR_SIZE is defined in words, aka int
 #define BtoS(len) ( ( len + CD_SECTOR_SIZE - 1 ) / CD_SECTOR_SIZE ) 
 // libcd's CD file structure contains size, location and filename
@@ -31,19 +35,24 @@ int CDreadOK = 0;
 // Value returned by CDsync() - Returns remaining sectors to load. 0 is good.
 int CDreadResult = 0;
 
-
 void initCD(){
+    #ifdef _release_
     // Init CD system
     CdInit();
-    printf("CD reading initialized\n");
+    printf("****CD reading initialized****\n");
+    #else
+    printf("****PCDRV reading initialized****\n");
+    #endif
 }
 
 //Read from cd method
 void readFromCd(unsigned char* filePath, long** file){
     #ifdef _release_
     // Set name of file to load
-    // Name of file to load
-    loadFile = filePath;
+    loadFile = malloc3(3+strlen(filePath));
+    strcpy(loadFile,"\\");
+    strcat(loadFile,filePath);
+    strcat(loadFile,";1");
     // Get file position from filename
     printf("Looking for file %s\n",loadFile);
     CdSearchFile( &filePos, loadFile);
@@ -64,13 +73,53 @@ void readFromCd(unsigned char* filePath, long** file){
     if(CDreadResult == 0){
         printf("read sync finished no sectors left\n");
         *file = dataBuffer;
-        free(dataBuffer);
     }else{
         printf("read sync has %d sectors left\n",CDreadResult);
     }
-    
+    free3(loadFile);
+    free3(dataBuffer);
     #else
     //pcdrv
-
+    printf("***********DEBUG VERSION LOADING FROM PCDRV**********");
+    int handler = -1;
+    int lastOpsVal = 0;
+    loadFile = malloc3(8+strlen(filePath));
+    strcpy(loadFile,"assets/");
+    strcat(loadFile,filePath);
+    printf("Loading file from PCDRV: %s\n", loadFile);
+    handler = PCopen( loadFile, FILEMODE_READONLY, 0);
+	if(handler == -1){
+		printf("File Not Found %s\n",loadFile);
+	}
+	else{
+		printf("File Found!!! %s\n",loadFile);
+		int fileSize = PClseek( handler, 0, 2 );
+			if ( fileSize == -1 ){
+				printf( "Couldn't seek to find the file size...\n" );
+			} else {
+				int returnToStart;
+				dataBuffer = malloc3(fileSize);
+				returnToStart = PClseek( handler, 0, 0 );
+				if ( fileSize == -1 ){
+                        printf( "Couldn't seek back to the start of the file...\n" );
+                    } else {
+						lastOpsVal = PCread(handler,dataBuffer, fileSize);
+						if ( lastOpsVal == -1 ){
+                            printf("Error reading the file!\n");
+                        } else {
+                            printf("Loaded File!!\n");
+                            *file = dataBuffer;
+                        }
+					}
+			}
+				lastOpsVal = PCclose(handler);
+				if(lastOpsVal == -1){
+					printf("File Closing Error!!\n");
+				}else{
+					printf("File Closed!\n");
+				}
+	}
+	free3(loadFile);
+    free3(dataBuffer);
     #endif
 }

@@ -62,24 +62,21 @@ int main(void)
 
     // Init display
     init();          
-    CdInit();
+    initCD();
 
-    readFromCd("\\YOSHI.TIM;1",&cdData[0]);
-    readFromCd("\\GRID.TMD;1",&cdData[1]);
-    readFromCd("\\YOSHI.TMD;1",&cdData[2]);
-    readFromCd("\\HELO.DAT;1",&cdData[3]);
+    readFromCd("YOSHI.TIM",&cdData[0]);
+    readFromCd("GRID.TMD",&cdData[1]);
+    readFromCd("YOSHI.TMD",&cdData[2]);
+    readFromCd("HELO.DAT",&cdData[3]);
 
-    printf("preparing print.\n");
-    for(int i = 0; i < sizeof(cdData);i++){
-            printf("cd data[%d]: %s. Location: %p\n",i,(char*)cdData[i],(char*)cdData[i]);
-        }
-    
 
     while (1)  // infinite loop
     {   
         
         // Print the content of the loaded file - See HELO.DAT
-       // FntPrint("%s%d\n", (char *)dataBuffer, VSync(-1));
+       
+       FntPrint("HELLO ALEX");
+       FntPrint("%s%d\n", (char *)cdData[3], VSync(-1));
         // Print heap and buffer addresses
        // FntPrint("Heap: %x - Buf: %x\n", ramAddr, dataBuffer);
         // Print returned values
@@ -87,7 +84,7 @@ int main(void)
         // Print filesize in bytes/sectors
        // FntPrint("Size: %dB sectors: %d", filePos.size, BtoS(filePos.size));
         
-        //FntFlush(-1);               // Draw print stream
+        FntFlush(-1);               // Draw print stream
         display();                  // Execute display()
     }
     return 0;
