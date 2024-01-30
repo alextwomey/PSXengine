@@ -24,7 +24,7 @@
 			<file name="YOSHI.TIM"	type="data"	source="../assets/YOSHI.TIM"/>
 			<file name="YOSHI.TMD"	type="data"	source="../assets/YOSHI.TMD"/>
 			<file name="GRID.TMD"	type="data"	source="../assets/GRID.TMD"/>
-            <file name="HELO.DAT"	type="data"	source="../program/HELO.DAT"/>
+            <file name="HELO.DAT"	type="data"	source="../assets/HELO.DAT"/>
             <!-- Place dummy sectors at the end -->
             <dummy sectors="1024"/>
 

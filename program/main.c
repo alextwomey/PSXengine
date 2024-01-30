@@ -19,9 +19,14 @@ DISPENV disp[2];                 // Double buffered DISPENV and DRAWENV
 DRAWENV draw[2];
 short db = 0;                      // index of which buffer is used, values 0, 1
 
+//Store all your CD Files Here
+//the number is how many files
+//you eventually want to load.
+long* cdData[4];
+
 // Define start address of allocated memory
 // Let's use an array so we don't have to worry about using a memory segment that's already in use.
-static unsigned char ramAddr[0x40000]; // https://discord.com/channels/642647820683444236/663664210525290507/864936962199781387
+static unsigned char ramAddr[0x00100000]; // https://discord.com/channels/642647820683444236/663664210525290507/864936962199781387
 
 void init(void)
 {
@@ -52,39 +57,32 @@ void display(void)
 }
 int main(void)
 {   
+    // Init heap
+    InitHeap3((u_long *)ramAddr, sizeof(ramAddr));
+
     // Init display
     init();          
-    // Init CD system
-    CdInit();
-    // Init heap
-    InitHeap((u_long *)ramAddr, sizeof(ramAddr));
-    // If the other method was chosen at l.39
-    // InitHeap((void *)0x80030D40, 0x40000);
-    // Set name of file to load
-    loadFile = "\\HELO.DAT;1";
-    // Get file position from filename
-    CdSearchFile( &filePos, loadFile);
-    // Allocate memory
-    dataBuffer = malloc( BtoS(filePos.size) * CD_SECTOR_SIZE );
-    // Issue  CdlSetloc CDROM command : Set the seek target position
-    // Beware of a misnomed 'sector' member in the CdlLOC struct that should really be named 'frame'.
-    // https://discord.com/channels/642647820683444236/663664210525290507/864912470996942910
-    CdControl(CdlSetloc, (u_char *)&filePos.pos, CtrlResult);
-    // Read data and load it to dataBuffer
-    CDreadOK = CdRead( (int)BtoS(filePos.size), (u_long *)dataBuffer, CdlModeSpeed );
-    // Wait for operation to complete
-    CDreadResult = CdReadSync(0, 0);
+    initCD();
+
+    readFromCd("YOSHI.TIM",&cdData[0]);
+    readFromCd("GRID.TMD",&cdData[1]);
+    readFromCd("YOSHI.TMD",&cdData[2]);
+    readFromCd("HELO.DAT",&cdData[3]);
+
 
     while (1)  // infinite loop
     {   
+        
         // Print the content of the loaded file - See HELO.DAT
-        FntPrint("%s%d\n", (char *)dataBuffer, VSync(-1));
+       
+       FntPrint("HELLO ALEX");
+       FntPrint("%s%d\n", (char *)cdData[3], VSync(-1));
         // Print heap and buffer addresses
-        FntPrint("Heap: %x - Buf: %x\n", ramAddr, dataBuffer);
+       // FntPrint("Heap: %x - Buf: %x\n", ramAddr, dataBuffer);
         // Print returned values
-        FntPrint("CdCtrl: %d\nRead  : %d %d\n", CtrlResult[0], CDreadOK, CDreadResult);
+       // FntPrint("CdCtrl: %d\nRead  : %d %d\n", CtrlResult[0], CDreadOK, CDreadResult);
         // Print filesize in bytes/sectors
-        FntPrint("Size: %dB sectors: %d", filePos.size, BtoS(filePos.size));
+       // FntPrint("Size: %dB sectors: %d", filePos.size, BtoS(filePos.size));
         
         FntFlush(-1);               // Draw print stream
         display();                  // Execute display()
