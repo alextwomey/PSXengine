@@ -1,5 +1,5 @@
 <!-- Defines the ISO project -->
-<iso_project image_name="psxeg.iso">
+<iso_project image_name="psxeg.iso" cue_sheet="pseg.cue" no_xa="1">
 
     <!-- Defines the data track for this tutorial -->
     <track type="data">
@@ -31,5 +31,6 @@
         </directory_tree>
 
     </track>
+    <track type="audio" source="../assets/lny.wav"/>
 
 </iso_project>

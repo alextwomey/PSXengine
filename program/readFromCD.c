@@ -6,12 +6,13 @@
 #include <malloc.h>
 #include <stdio.h>
 #include <STRINGS.H>
+#include <libspu.h>
 #include"../third_party/pcdrv.h"
 //
 //**********************
 //Release def (switches cd read and pcdrv read)
 //**********************
-//#define _release_
+#define _release_
 //**********************
 
 // CD specifics
@@ -34,6 +35,8 @@ u_char CtrlResult[8];
 int CDreadOK = 0;
 // Value returned by CDsync() - Returns remaining sectors to load. 0 is good.
 int CDreadResult = 0;
+
+
 
 void initCD(){
     #ifdef _release_
@@ -80,7 +83,6 @@ void readFromCd(unsigned char* filePath, long** file){
     free3(dataBuffer);
     #else
     //pcdrv
-    printf("***********DEBUG VERSION LOADING FROM PCDRV**********");
     int handler = -1;
     int lastOpsVal = 0;
     loadFile = malloc3(8+strlen(filePath));
