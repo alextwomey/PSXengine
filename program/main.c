@@ -7,6 +7,7 @@
 #include <libgpu.h>
 #include <libapi.h>
 #include <libspu.h>
+#include <libcd.h>
 #include "readFromCD.c"
 
 #define VMODE 0                 // Video Mode : 0 : NTSC, 1: PAL
@@ -100,20 +101,21 @@ int main(void)
     // Play second audio track
     // Get CD TOC
     while ((ntoc = CdGetToc(loc)) == 0) { 		/* Read TOC */
-        FntPrint("No TOC found: please use CD-DA disc...\n");
+        printf("No TOC found: please use CD-DA disc...\n");
     }
     // Prevent out of bound pos
     for (int i = 1; i < ntoc; i++) {
         CdIntToPos(CdPosToInt(&loc[i]) - 74, &loc[i]);
+        printf("%s", (char*)&loc[i]);
     }
     // Those array will hold the return values of the CD commands
     u_char param[4], result[8];
     // Set CD parameters ; Report Mode ON, CD-DA ON. See LibeOver47.pdf, p.188
     param[0] = CdlModeRept|CdlModeDA;	
-    CdControlB (CdlSetmode, param, 0);	/* set mode */
+    CdControl(CdlSetmode, param, 0);	/* set mode */
     VSync (3);				/* wait three vsync times */
     // Play second track in toc array
-    CdControlB (CdlPlay, (u_char *)&loc[0], 0);	/* play */
+    CdControl(CdlPlay, (u_char *)&loc[2], 0);	/* play */
 
 
     while (1)  // infinite loop
@@ -135,7 +137,7 @@ int main(void)
         if (count%50 == 0){
             CdReady(1, &result[0]);
             // current track number can also be obtained with 
-            CdControlB (CdlGetlocP, 0, &result[0]);
+            CdControl(CdlGetlocP, 0, &result[0]);
         }
 
         FntPrint("Hello CDDA !\n");  // Send string to print stream

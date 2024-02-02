@@ -44,7 +44,7 @@
       "executable": "${workspaceRoot}/psxeg.elf",
       "autorun": [
         "monitor reset hard shellhalt",
-        "monitor mountcd ${workspaceRoot}/makeISO/psxeg.iso",
+        "monitor mountcd ${workspaceRoot}/makeISO/pseg.cue",
         "load psxeg.elf",
         "tbreak main",
         "continue"

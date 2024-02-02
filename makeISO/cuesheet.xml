@@ -1,5 +1,5 @@
 <!-- Defines the ISO project -->
-<iso_project image_name="psxeg.iso" cue_sheet="pseg.cue" no_xa="1">
+<iso_project image_name="psxeg.bin" cue_sheet="pseg.cue">
 
     <!-- Defines the data track for this tutorial -->
     <track type="data">
@@ -27,10 +27,10 @@
             <file name="HELO.DAT"	type="data"	source="../assets/HELO.DAT"/>
             <!-- Place dummy sectors at the end -->
             <dummy sectors="1024"/>
-
         </directory_tree>
 
     </track>
     <track type="audio" source="../assets/lny.wav"/>
+    <track type="audio" source="../assets/funk.wav"/>
 
 </iso_project>
