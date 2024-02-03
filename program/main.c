@@ -26,11 +26,7 @@ short db = 0;                      // index of which buffer is used, values 0, 1
 //you eventually want to load.
 long* cdData[4];
 //cd audio
-// CD tracks 
-int playing = -1;
-int tracks[] = {2, 0};  // Track to play , 1 is data, 2 is beach.wav, 3 is funk.wav. See isoconfig.xml
-// SPU attributes
-SpuCommonAttr spuSettings;
+
 
 // Define start address of allocated memory
 // Let's use an array so we don't have to worry about using a memory segment that's already in use.
@@ -68,55 +64,16 @@ int main(void)
     // Init heap
     InitHeap3((u_long *)ramAddr, sizeof(ramAddr));
 
-    //cd stuff
-    int count = 0;
-    int flip = 1;
-    CdlLOC loc[100];
-    int ntoc;
-
     // Init display
     init();          
     initCD();
-    SpuInit();
+    initCDAudio();
     //readFromCd("YOSHI.TIM",&cdData[0]);
     //readFromCd("GRID.TMD",&cdData[1]);
     //readFromCd("YOSHI.TMD",&cdData[2]);
     //readFromCd("HELO.DAT",&cdData[3]);
 
-    // Set master & CD volume to max
-    spuSettings.mask = (SPU_COMMON_MVOLL | SPU_COMMON_MVOLR | SPU_COMMON_CDVOLL | SPU_COMMON_CDVOLR | SPU_COMMON_CDMIX);
-    // Master volume should be in range 0x0000 - 0x3fff
-    spuSettings.mvol.left  = 0x3fff;
-    spuSettings.mvol.right = 0x3fff;
-    // Cd volume should be in range 0x0000 - 0x7fff
-    spuSettings.cd.volume.left = 0x7fff;
-    spuSettings.cd.volume.right = 0x7fff;
-    // Enable CD input ON
-    spuSettings.cd.mix = SPU_ON;
-    // Apply settings
-    SpuSetCommonAttr(&spuSettings);
-    // Set transfer mode 
-    SpuSetTransferMode(SPU_TRANSFER_BY_DMA);
-    // CD Playback setup
-    // Play second audio track
-    // Get CD TOC
-    while ((ntoc = CdGetToc(loc)) == 0) { 		/* Read TOC */
-        printf("No TOC found: please use CD-DA disc...\n");
-    }
-    // Prevent out of bound pos
-    for (int i = 1; i < ntoc; i++) {
-        CdIntToPos(CdPosToInt(&loc[i]) - 74, &loc[i]);
-        printf("%s", (char*)&loc[i]);
-    }
-    // Those array will hold the return values of the CD commands
-    u_char param[4], result[8];
-    // Set CD parameters ; Report Mode ON, CD-DA ON. See LibeOver47.pdf, p.188
-    param[0] = CdlModeRept|CdlModeDA;	
-    CdControl(CdlSetmode, param, 0);	/* set mode */
-    VSync (3);				/* wait three vsync times */
-    // Play second track in toc array
-    CdControl(CdlPlay, (u_char *)&loc[2], 0);	/* play */
-
+    playMusicFromCD(2);
 
     while (1)  // infinite loop
     {   
@@ -132,12 +89,14 @@ int main(void)
         // Print filesize in bytes/sectors
        // FntPrint("Size: %dB sectors: %d", filePos.size, BtoS(filePos.size));
         count ++;
-        // Get current track number ~ every second
-        // See LibeOver47.pdf, p.188
+        
         if (count%50 == 0){
+            // Get current track number ~ every second
+            // See LibeOver47.pdf, p.188
             CdReady(1, &result[0]);
             // current track number can also be obtained with 
             CdControl(CdlGetlocP, 0, &result[0]);
+            
         }
 
         FntPrint("Hello CDDA !\n");  // Send string to print stream
