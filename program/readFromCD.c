@@ -6,12 +6,13 @@
 #include <malloc.h>
 #include <stdio.h>
 #include <STRINGS.H>
+#include <libspu.h>
 #include"../third_party/pcdrv.h"
 //
 //**********************
 //Release def (switches cd read and pcdrv read)
 //**********************
-//#define _release_
+#define _release_
 //**********************
 
 // CD specifics
@@ -34,6 +35,19 @@ u_char CtrlResult[8];
 int CDreadOK = 0;
 // Value returned by CDsync() - Returns remaining sectors to load. 0 is good.
 int CDreadResult = 0;
+// CD tracks 
+int playing = -1;
+int tracks[] = {2, 0};  // Track to play , 1 is data, 2 is beach.wav, 3 is funk.wav. See isoconfig.xml
+// SPU attributes
+SpuCommonAttr spuSettings;
+//cd stuff
+int count = 0;
+int flip = 1;
+CdlLOC loc[100];
+int ntoc;
+// Those array will hold the return values of the CD commands
+u_char param[4], result[8];
+
 
 void initCD(){
     #ifdef _release_
@@ -43,6 +57,44 @@ void initCD(){
     #else
     printf("****PCDRV reading initialized****\n");
     #endif
+}
+void initCDAudio(){
+    printf("CD Audio Initialized!!");
+    SpuInit();
+    // Set master & CD volume to max
+    spuSettings.mask = (SPU_COMMON_MVOLL | SPU_COMMON_MVOLR | SPU_COMMON_CDVOLL | SPU_COMMON_CDVOLR | SPU_COMMON_CDMIX);
+    // Master volume should be in range 0x0000 - 0x3fff
+    spuSettings.mvol.left  = 0x3fff;
+    spuSettings.mvol.right = 0x3fff;
+    // Cd volume should be in range 0x0000 - 0x7fff
+    spuSettings.cd.volume.left = 0x7fff;
+    spuSettings.cd.volume.right = 0x7fff;
+    // Enable CD input ON
+    spuSettings.cd.mix = SPU_ON;
+    // Apply settings
+    SpuSetCommonAttr(&spuSettings);
+    // Set transfer mode 
+    SpuSetTransferMode(SPU_TRANSFER_BY_DMA);
+    // CD Playback setup
+    // Play second audio track
+    // Get CD TOC
+    while ((ntoc = CdGetToc(loc)) == 0) { 		/* Read TOC */
+        printf("No TOC found: please use CD-DA disc...\n");
+    }
+    // Prevent out of bound pos
+    for (int i = 1; i < ntoc; i++) {
+        CdIntToPos(CdPosToInt(&loc[i]) - 74, &loc[i]);
+        printf("%s", (char*)&loc[i]);
+    }
+    // Set CD parameters ; Report Mode ON, CD-DA ON. See LibeOver47.pdf, p.188
+    param[0] = CdlModeRept|CdlModeDA;
+    CdControl(CdlSetmode, param, 0);	/* set mode */
+}
+
+void playMusicFromCD(int trackNum){
+    // Play second track in toc array
+    CdControl(CdlPlay, (u_char *)&loc[trackNum], 0);	/* play */	
+    
 }
 
 //Read from cd method
@@ -80,7 +132,6 @@ void readFromCd(unsigned char* filePath, long** file){
     free3(dataBuffer);
     #else
     //pcdrv
-    printf("***********DEBUG VERSION LOADING FROM PCDRV**********");
     int handler = -1;
     int lastOpsVal = 0;
     loadFile = malloc3(8+strlen(filePath));
