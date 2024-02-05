@@ -1,5 +1,6 @@
 #include "constants.c"
 #include "readFromCD.c"
+#include "2D.c"
 
 void render();
 
@@ -23,6 +24,9 @@ int main(void){
     readFromCd("GRAD.TIM",&cdData[4]);
     initCDAudio();
     playMusicFromCD(2);
+
+
+
     
     while (1)  // infinite loop
     {   
