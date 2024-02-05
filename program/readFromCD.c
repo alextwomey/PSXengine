@@ -59,7 +59,7 @@ void initCD(){
     #endif
 }
 void initCDAudio(){
-    printf("CD Audio Initialized!!");
+    printf("CD Audio Initialized!!\n");
     SpuInit();
     // Set master & CD volume to max
     spuSettings.mask = (SPU_COMMON_MVOLL | SPU_COMMON_MVOLR | SPU_COMMON_CDVOLL | SPU_COMMON_CDVOLR | SPU_COMMON_CDMIX);
@@ -96,6 +96,19 @@ void playMusicFromCD(int trackNum){
     CdControl(CdlPlay, (u_char *)&loc[trackNum], 0);	/* play */	
     
 }
+
+
+        // Print heap and buffer addresses
+       // FntPrint("Heap: %x - Buf: %x\n", ramAddr, dataBuffer);
+        // Print returned values
+       // FntPrint("CdCtrl: %d\nRead  : %d %d\n", CtrlResult[0], CDreadOK, CDreadResult);
+        // Print filesize in bytes/sectors
+       // FntPrint("Size: %dB sectors: %d", filePos.size, BtoS(filePos.size));
+    // Get current track number ~ every second
+            // See LibeOver47.pdf, p.188
+           // CdReady(1, &result[0]);
+            // current track number can also be obtained with 
+           // CdControl(CdlGetlocP, 0, &result[0]);
 
 //Read from cd method
 void readFromCd(unsigned char* filePath, long** file){
