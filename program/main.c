@@ -36,7 +36,7 @@ void render() {
     clear_display();
     count ++;
     FntPrint("Hello CDDA !\n");  // Send string to print stream
-    FntPrint("Playback status: %d\n", result[1]);  // Send string to print stream
+    //FntPrint("Playback status: %d\n", result[1]);  // Send string to print stream
     FntPrint("Count: %d", count);
     display();
 }

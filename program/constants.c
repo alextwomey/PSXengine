@@ -10,6 +10,8 @@
 #include <sys/types.h>
 #include <STRINGS.H>
 
+
+
 #define VMODE 0                 // Video Mode : 0 : NTSC, 1: PAL
 #define SCREENXRES 320          // Screen width
 #define SCREENYRES 240         // Screen height : If VMODE is 0 = 240, if VMODE is 1 = 256 
@@ -71,9 +73,10 @@ void SetBGColor (int r, int g, int  b) {
 
 void init(void)
 {
-	ResetGraph(0);
+	//ResetGraph(0);
 	SetVideoMode(0);
 	printf("Video mode is(%ld)\n",GetVideoMode());
+	printf("SCREENXRES: %d, SCREENYRES: %d\n",SCREENXRES,SCREENYRES);
 	//new gs init
 	GsInitGraph(SCREENXRES,SCREENYRES,GsNONINTER|GsOFSGPU,1,0);
 	GsDefDispBuff(0, 0, 0, SCREENYRES);
@@ -87,7 +90,7 @@ void init(void)
 	GsClearOt(0, 0, &orderingTable[1]);
 	
 	FntLoad(960, 0);                // Load font to vram at 960,0(+128)
-    FntOpen((-320/2)+MARGINX, (-240/2)+MARGINY, SCREENXRES, SCREENYRES, 0, 512);
+    FntOpen((-SCREENXRES/2)+MARGINX,(-SCREENYRES/2)+MARGINY,SCREENXRES, SCREENYRES, 0, 512);
 
 	// Setup 3D and projection matrix
 	GsInit3D();

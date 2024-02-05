@@ -12,7 +12,7 @@
 //**********************
 //Release def (switches cd read and pcdrv read)
 //**********************
-#define _release_
+//#define _release_
 //**********************
 
 // CD specifics
@@ -59,6 +59,7 @@ void initCD(){
     #endif
 }
 void initCDAudio(){
+    #ifdef _release_
     printf("CD Audio Initialized!!\n");
     SpuInit();
     // Set master & CD volume to max
@@ -89,12 +90,18 @@ void initCDAudio(){
     // Set CD parameters ; Report Mode ON, CD-DA ON. See LibeOver47.pdf, p.188
     param[0] = CdlModeRept|CdlModeDA;
     CdControl(CdlSetmode, param, 0);	/* set mode */
+    #else
+    printf("CD audio NOT INIT, debug mode on\n");
+    #endif
 }
 
 void playMusicFromCD(int trackNum){
+    #ifdef _release_
     // Play second track in toc array
     CdControl(CdlPlay, (u_char *)&loc[trackNum], 0);	/* play */	
-    
+    #else
+    printf("not playing audio, debug mode on\n");
+    #endif
 }
 
 
@@ -171,7 +178,7 @@ void readFromCd(unsigned char* filePath, long** file){
 						if ( lastOpsVal == -1 ){
                             printf("Error reading the file!\n");
                         } else {
-                            printf("Loaded File!!\n");
+                            printf("Loaded file with size: %d\n",fileSize);
                             *file = dataBuffer;
                         }
 					}
