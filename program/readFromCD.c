@@ -8,6 +8,7 @@
 #include <libspu.h>
 #include"../third_party/pcdrv.h"
 #include "readFromCD.h"
+#include "constants.h"
 
 
 CdlFILE filePos = {0};

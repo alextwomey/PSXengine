@@ -11,6 +11,14 @@
 #include <sys/types.h>
 #include <STRINGS.H>
 
+
+//**********************
+//Release def (switches cd read and pcdrv read)
+//**********************
+//#define _release_
+//**********************
+
+
 #define VMODE 0                 // Video Mode : 0 : NTSC, 1: PAL
 #define SCREENXRES 320          // Screen width
 #define SCREENYRES 240         // Screen height : If VMODE is 0 = 240, if VMODE is 1 = 256 

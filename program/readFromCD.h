@@ -10,11 +10,7 @@
 #include <libspu.h>
 #include"../third_party/pcdrv.h"
 //
-//**********************
-//Release def (switches cd read and pcdrv read)
-//**********************
-//#define _release_
-//**********************
+
 
 // CD specifics
 #define CD_SECTOR_SIZE 2048
