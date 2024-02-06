@@ -1,4 +1,4 @@
-
+#include "2d.h"
 void create_sprite(unsigned char imageData,int startX,int startY,int bitMode){
 
     GsIMAGE* tim_data;

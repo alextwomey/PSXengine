@@ -1,14 +1,24 @@
-#include "constants.c"
-#include "readFromCD.c"
-#include "2D.c"
+#include <STDLIB.H>
+#include <STDIO.H>
+#include <LIBGTE.H>
+#include <LIBGPU.H>
+#include <LIBGS.H>
+#include <LIBETC.H>
+#include <LIBSPU.H>
+#include <LIBDS.H>
+#include <LIBCD.H>
+#include <sys/types.h>
+#include <STRINGS.H>
+
+#include "constants.h"
+#include "readFromCD.h"
+#include "2D.h"
 
 void render();
 
 //main program 
 int main(void){   
-    // Init heap
-    InitHeap3((u_long *)ramAddr, sizeof(ramAddr));
-
+    initMyHeap();
     // Init display
     init();   
     //The background color of the scene
