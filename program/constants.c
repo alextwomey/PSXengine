@@ -86,5 +86,5 @@ void display() {
 	//was 0, 64, 0
 	GsSortClear(BGColor.r, BGColor.g, BGColor.b, &orderingTable[myActiveBuff]);
 	GsDrawOt(&orderingTable[myActiveBuff]);
-
+	myActiveBuff = myActiveBuff^1;
 }

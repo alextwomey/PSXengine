@@ -12,5 +12,5 @@ typedef struct {
 	GsSPRITE sprite;
 } Image;
 
-void create_sprite(unsigned char imageData[],int startX,int startY,GsSPRITE **sprite,int bitMode);
+void create_sprite(unsigned char *imageData[],int startX,int startY,GsSPRITE **sprite,int bitMode);
 void draw_sprite(Sprite *sprite);

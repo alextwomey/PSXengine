@@ -2,7 +2,7 @@
 #include "2d.h"
 #include "constants.h"
 
-void create_sprite(unsigned char imageData[],int startX,int startY,GsSPRITE **sprite,int bitMode){
+void create_sprite(unsigned char *imageData[],int startX,int startY,GsSPRITE **sprite,int bitMode){
 
     GsIMAGE* tim_data;
     RECT* rect;
