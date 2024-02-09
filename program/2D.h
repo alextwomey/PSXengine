@@ -4,6 +4,13 @@
 
 #define Sprite GsSPRITE
 #define ROT_ONE 4096
+// image bit depths
+#define FOURBITIMAGE (0x08)
+#define EIGHTBITIMAGE (0x09)
+// sprite bit patterns
+#define FOURBITCOLOUR (0 << 24)
+#define EIGHTBITCOLOUR (1 << 24)
+#define SIXTEENBITCOLOUR (1 << 25)
 
 typedef struct {
 	RECT rect;
@@ -12,5 +19,5 @@ typedef struct {
 	GsSPRITE sprite;
 } Image;
 
-void create_sprite(unsigned char *imageData[],int startX,int startY,GsSPRITE **sprite,int bitMode);
-void draw_sprite(Sprite *sprite);
+void create_sprite(unsigned char imageData[],int startX,int startY,GsSPRITE* sprite,int bitMode);
+void draw_sprite(Sprite* sprite);

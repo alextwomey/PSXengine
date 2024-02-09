@@ -35,9 +35,9 @@ int main(void){
     initCDAudio();
     playMusicFromCD(2);
 
-    GsSPRITE* myBgSprite;
+    GsSPRITE myBgSprite;
     create_sprite((u_char*)cdData[4],0,0,&myBgSprite,1);
-    draw_sprite(myBgSprite);
+    draw_sprite(&myBgSprite);
     while (1)  // infinite loop
     {   
         render();
