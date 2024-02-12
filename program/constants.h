@@ -21,7 +21,9 @@
 
 #define VMODE 0                 // Video Mode : 0 : NTSC, 1: PAL
 #define SCREENXRES 320          // Screen width
-#define SCREENYRES 240         // Screen height : If VMODE is 0 = 240, if VMODE is 1 = 256 
+#define SCREENYRES 240         // Screen height : If VMODE is 0 = 240, if VMODE is 1 = 256
+#define SCREENLEFTX -160;
+#define SCREENTOPY -120; 
 #define CENTERX SCREENXRES/2    // Center of screen on x 
 #define CENTERY SCREENYRES/2    // Center of screen on y
 #define MARGINX 32             // margins for text display

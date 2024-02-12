@@ -5,8 +5,8 @@
 #define Sprite GsSPRITE
 #define ROT_ONE 4096
 // image bit depths
-#define FOURBITIMAGE (0x08)
-#define EIGHTBITIMAGE (0x09)
+#define FOURBITIMAGE 4412376
+#define EIGHTBITIMAGE 4412377
 // sprite bit patterns
 #define FOURBITCOLOUR (0 << 24)
 #define EIGHTBITCOLOUR (1 << 24)

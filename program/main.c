@@ -16,6 +16,8 @@
 
 void render();
 
+GsSPRITE myBgSprite;
+
 //main program 
 int main(void){   
     initMyHeap();
@@ -35,9 +37,14 @@ int main(void){
     initCDAudio();
     playMusicFromCD(2);
 
-    GsSPRITE myBgSprite;
+    
     create_sprite((u_char*)cdData[4],0,0,&myBgSprite,1);
-    draw_sprite(&myBgSprite);
+    myBgSprite.x = SCREENLEFTX;
+    myBgSprite.y = SCREENTOPY;
+    myBgSprite.w = SCREENXRES;
+    myBgSprite.h = SCREENYRES;
+
+    //draw_sprite(&myBgSprite);
     while (1)  // infinite loop
     {   
         render();
@@ -52,5 +59,6 @@ void render() {
     FntPrint("Hello CDDA !\n");  // Send string to print stream
     //FntPrint("Playback status: %d\n", result[1]);  // Send string to print stream
     FntPrint("Count: %d", count);
+    GsSortFastSprite(&myBgSprite, &orderingTable[myActiveBuff], 0);
     display();
 }
