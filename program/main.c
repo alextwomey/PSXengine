@@ -44,7 +44,6 @@ int main(void){
     myBgSprite.w = SCREENXRES;
     myBgSprite.h = SCREENYRES;
 
-    //draw_sprite(&myBgSprite);
     while (1)  // infinite loop
     {   
         render();

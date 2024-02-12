@@ -71,8 +71,3 @@ void create_sprite(unsigned char imageData[],int startX,int startY,GsSPRITE* spr
 	free3(crect);
 	free3(tim_data);
 }
-
-void draw_sprite(Sprite* sprite){
-    myActiveBuff = GsGetActiveBuff();
-    GsSortSprite(sprite, &orderingTable[myActiveBuff], 0);
-}
