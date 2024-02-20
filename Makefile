@@ -4,8 +4,8 @@ TYPE = ps-exe
 SRCS = \
 third_party/nugget/common/crt0/crt0.s \
 program/main.c \
-program/readFromCD.c \
 program/constants.c \
+program/readFromCD.c \
 program/2D.c \
 
 

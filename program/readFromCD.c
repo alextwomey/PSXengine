@@ -5,10 +5,11 @@
 #include <malloc.h>
 #include <stdio.h>
 #include <STRINGS.H>
-#include <libspu.h>
-#include"../third_party/pcdrv.h"
 #include "readFromCD.h"
 #include "constants.h"
+#include <libspu.h>
+#include"../third_party/pcdrv.h"
+
 
 
 CdlFILE filePos = {0};
@@ -17,7 +18,14 @@ int CDreadResult = 0;
 int tracks[] = {2, 0};  // Track to play , 1 is data, 2 is beach.wav, 3 is funk.wav. See isoconfig.xml
 int count = 0;
 int flip = 1;
-u_long * dataBuffer;  
+u_long * dataBuffer;
+SpuCommonAttr spuSettings;
+CdlLOC loc[100];
+int ntoc;
+// Those array will hold the return values of the CD commands
+u_char param[4], result[8];
+u_char CtrlResult[8];
+char * loadFile;
 
 void initCD(){
     #ifdef _release_
