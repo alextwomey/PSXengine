@@ -15,7 +15,7 @@
 //**********************
 //Release def (switches cd read and pcdrv read)
 //**********************
-#define _release_
+//#define _release_
 //**********************
 
 

@@ -37,6 +37,10 @@ void initMyHeap(){
 
 void init()
 {
+	#ifdef _release_
+	printf("***RELEASE MODE***\n");
+	#else
+	printf("===DEBUG MODE===\n");
 	//ResetGraph(0);
 	SetVideoMode(0);
 	printf("Video mode is(%ld)\n",GetVideoMode());
@@ -65,6 +69,7 @@ void init()
 	//0 = No Fog
 	//1 = Fog
 	GsSetLightMode(1);
+	#endif
 }
 
 void clear_display() {
