@@ -25,6 +25,7 @@
 			<file name="YOSHI.TMD"	type="data"	source="../assets/YOSHI.TMD"/>
 			<file name="GRID.TMD"	type="data"	source="../assets/GRID.TMD"/>
             <file name="HELO.DAT"	type="data"	source="../assets/HELO.DAT"/>
+            <file name="GRAD.TIM" type="data" source="../assets/GRAD.TIM"/>
             <!-- Place dummy sectors at the end -->
             <dummy sectors="1024"/>
         </directory_tree>

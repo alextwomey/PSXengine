@@ -3,7 +3,11 @@ TYPE = ps-exe
 
 SRCS = \
 third_party/nugget/common/crt0/crt0.s \
-program/main.c 
+program/main.c \
+program/constants.c \
+program/readFromCD.c \
+program/2D.c \
+
 
 CPPFLAGS += -Ithird_party/psyq-iwyu/include
 LDFLAGS += -Lthird_party/psyq/lib

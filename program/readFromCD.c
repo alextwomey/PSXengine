@@ -1,53 +1,31 @@
 //
 // Adapted from nolibgs_hello_worlds cd lib
 //
-// CD library
 #include <libcd.h>
 #include <malloc.h>
 #include <stdio.h>
 #include <STRINGS.H>
+#include "readFromCD.h"
+#include "constants.h"
 #include <libspu.h>
 #include"../third_party/pcdrv.h"
-//
-//**********************
-//Release def (switches cd read and pcdrv read)
-//**********************
-#define _release_
-//**********************
 
-// CD specifics
-#define CD_SECTOR_SIZE 2048
-#define FILEMODE_READONLY 0
-#define FILEMODE_WRITEONLY 1
-#define FILEMODE_READWRITE 2
-// Converting bytes to sectors SECTOR_SIZE is defined in words, aka int
-#define BtoS(len) ( ( len + CD_SECTOR_SIZE - 1 ) / CD_SECTOR_SIZE ) 
-// libcd's CD file structure contains size, location and filename
+
+
 CdlFILE filePos = {0};
-//~ struct EXEC * exeStruct;
-static char * loadFile;
-// Load data to this buffer
-u_long * dataBuffer;              
-// Those are not strictly needed, but we'll use them to see the commands results.
-// They could be replaced by a 0 in the various functions they're used with.
-u_char CtrlResult[8];
-// Value returned by CDread() - 1 is good, 0 is bad
 int CDreadOK = 0;
-// Value returned by CDsync() - Returns remaining sectors to load. 0 is good.
 int CDreadResult = 0;
-// CD tracks 
-int playing = -1;
 int tracks[] = {2, 0};  // Track to play , 1 is data, 2 is beach.wav, 3 is funk.wav. See isoconfig.xml
-// SPU attributes
-SpuCommonAttr spuSettings;
-//cd stuff
 int count = 0;
 int flip = 1;
+u_long * dataBuffer;
+SpuCommonAttr spuSettings;
 CdlLOC loc[100];
 int ntoc;
 // Those array will hold the return values of the CD commands
 u_char param[4], result[8];
-
+u_char CtrlResult[8];
+char * loadFile;
 
 void initCD(){
     #ifdef _release_
@@ -59,7 +37,8 @@ void initCD(){
     #endif
 }
 void initCDAudio(){
-    printf("CD Audio Initialized!!");
+    #ifdef _release_
+    printf("CD Audio Initialized!!\n");
     SpuInit();
     // Set master & CD volume to max
     spuSettings.mask = (SPU_COMMON_MVOLL | SPU_COMMON_MVOLR | SPU_COMMON_CDVOLL | SPU_COMMON_CDVOLR | SPU_COMMON_CDMIX);
@@ -89,12 +68,18 @@ void initCDAudio(){
     // Set CD parameters ; Report Mode ON, CD-DA ON. See LibeOver47.pdf, p.188
     param[0] = CdlModeRept|CdlModeDA;
     CdControl(CdlSetmode, param, 0);	/* set mode */
+    #else
+    printf("CD audio NOT INIT, debug mode on\n");
+    #endif
 }
 
 void playMusicFromCD(int trackNum){
+    #ifdef _release_
     // Play second track in toc array
     CdControl(CdlPlay, (u_char *)&loc[trackNum], 0);	/* play */	
-    
+    #else
+    printf("not playing audio, debug mode on\n");
+    #endif
 }
 
 //Read from cd method
@@ -134,7 +119,7 @@ void readFromCd(unsigned char* filePath, long** file){
     //pcdrv
     int handler = -1;
     int lastOpsVal = 0;
-    loadFile = malloc3(8+strlen(filePath));
+    char* loadFile = malloc3(8+strlen(filePath));
     strcpy(loadFile,"assets/");
     strcat(loadFile,filePath);
     printf("Loading file from PCDRV: %s\n", loadFile);
@@ -158,7 +143,7 @@ void readFromCd(unsigned char* filePath, long** file){
 						if ( lastOpsVal == -1 ){
                             printf("Error reading the file!\n");
                         } else {
-                            printf("Loaded File!!\n");
+                            printf("Loaded file with size: %d\n",fileSize);
                             *file = dataBuffer;
                         }
 					}
@@ -174,3 +159,17 @@ void readFromCd(unsigned char* filePath, long** file){
     free3(dataBuffer);
     #endif
 }
+
+
+
+        // Print heap and buffer addresses
+       // FntPrint("Heap: %x - Buf: %x\n", ramAddr, dataBuffer);
+        // Print returned values
+       // FntPrint("CdCtrl: %d\nRead  : %d %d\n", CtrlResult[0], CDreadOK, CDreadResult);
+        // Print filesize in bytes/sectors
+       // FntPrint("Size: %dB sectors: %d", filePos.size, BtoS(filePos.size));
+    // Get current track number ~ every second
+            // See LibeOver47.pdf, p.188
+           // CdReady(1, &result[0]);
+            // current track number can also be obtained with 
+           // CdControl(CdlGetlocP, 0, &result[0]);
