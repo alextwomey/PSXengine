@@ -10,8 +10,6 @@
 #include <libspu.h>
 #include"../third_party/pcdrv.h"
 
-
-
 CdlFILE filePos = {0};
 int CDreadOK = 0;
 int CDreadResult = 0;
