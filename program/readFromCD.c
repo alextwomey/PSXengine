@@ -37,7 +37,7 @@ void initCD(){
 void initCDAudio(){
     #ifdef _release_
     
-    SPUInitialization();
+    
     // CD Playback setup
     // Play second audio track
     // Get CD TOC
@@ -99,7 +99,7 @@ void readFromCd(unsigned char* filePath, long** file){
         printf("read sync has %d sectors left\n",CDreadResult);
     }
     free3(loadFile);
-    free3(dataBuffer);
+    //free3(dataBuffer);
     #else
     //pcdrv
     int handler = -1;
@@ -141,7 +141,7 @@ void readFromCd(unsigned char* filePath, long** file){
 				}
 	}
 	free3(loadFile);
-    free3(dataBuffer);
+    //free3(dataBuffer);
     #endif
 }
 

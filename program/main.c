@@ -15,6 +15,7 @@
 #include "readFromCD.h"
 #include "2D.h"
 #include "pad.h"
+#include "SPU.h"
 
 void render();
 void controls();
@@ -38,18 +39,20 @@ int main(void){
 	//in RGB (values between 0-255)
 	SetBGColor(0, 21, 255);
     initializePad();
+    SPUInitialization();
     initCD();
 
-    //readFromCd("YOSHI.TIM",&cdData[0]);
-    //readFromCd("GRID.TMD",&cdData[1]);
-    //readFromCd("YOSHI.TMD",&cdData[2]);
-    //readFromCd("HELO.DAT",&cdData[3]);
+    readFromCd("YOSHI.TIM",&cdData[0]);
+    readFromCd("GRID.TMD",&cdData[1]);
+    readFromCd("YOSHI.TMD",&cdData[2]);
+    readFromCd("HELO.DAT",&cdData[3]);
     readFromCd("GRAD.TIM",&cdData[4]);
+    readFromCd("0_COME.VAG",&cdData[5]);
     initCDAudio();
     playMusicFromCD(2);
-
-    
+  
     create_sprite((u_char*)cdData[4],0,0,&myBgSprite,1);
+    loadVag(cdData[5], 0);
     myBgSprite.x = SCREENLEFTX;
     myBgSprite.y = SCREENTOPY;
     myBgSprite.w = SCREENXRES;
@@ -57,6 +60,11 @@ int main(void){
 
     while (1)  // infinite loop
     {   
+        
+        if(count % 60 == 0){
+            
+            FntPrint("SECOND\n");
+        }
         update();
         render();
     }
@@ -70,8 +78,13 @@ void render() {
     FntPrint("Hello CDDA !\n");  // Send string to print stream
     //FntPrint("Playback status: %d\n", result[1]);  // Send string to print stream
     FntPrint("Count: %d\n", count);
+    FntPrint("\nSet Start addr    : %08x", vag_spu_address);
+    FntPrint("\nReturn start addr : %08x", spu_start_address);      
+    FntPrint("\nGet Start  addr   : %08x", get_start_addr);  
+    FntPrint("\nReturn size       : %08x\n", transSize); 
     if(pad.left){
         FntPrint("PAD LEFT PRESSED!!!\n");
+        playSFX();
     }
     if(pad.down){
         FntPrint("PAD DOWN PRESSED!!!\n");
