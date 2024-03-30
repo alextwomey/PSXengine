@@ -7,7 +7,6 @@
 #include <malloc.h>
 #include <stdio.h>
 #include <STRINGS.H>
-#include <libspu.h>
 #include"../third_party/pcdrv.h"
 //
 
@@ -36,8 +35,7 @@ extern int CDreadResult;
 // CD tracks 
 extern int playing;
 extern int tracks[];  // Track to play , 1 is data, 2 is beach.wav, 3 is funk.wav. See isoconfig.xml
-// SPU attributes
-extern SpuCommonAttr spuSettings;
+
 //cd stuff
 extern int count;
 extern int flip;

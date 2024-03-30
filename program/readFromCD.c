@@ -7,8 +7,9 @@
 #include <STRINGS.H>
 #include "readFromCD.h"
 #include "constants.h"
-#include <libspu.h>
-#include"../third_party/pcdrv.h"
+
+#include "../third_party/pcdrv.h"
+#include "SPU.h"
 
 CdlFILE filePos = {0};
 int CDreadOK = 0;
@@ -17,7 +18,6 @@ int tracks[] = {2, 0};  // Track to play , 1 is data, 2 is beach.wav, 3 is funk.
 int count = 0;
 int flip = 1;
 u_long * dataBuffer;
-SpuCommonAttr spuSettings;
 CdlLOC loc[100];
 int ntoc;
 // Those array will hold the return values of the CD commands
@@ -36,22 +36,8 @@ void initCD(){
 }
 void initCDAudio(){
     #ifdef _release_
-    printf("CD Audio Initialized!!\n");
-    SpuInit();
-    // Set master & CD volume to max
-    spuSettings.mask = (SPU_COMMON_MVOLL | SPU_COMMON_MVOLR | SPU_COMMON_CDVOLL | SPU_COMMON_CDVOLR | SPU_COMMON_CDMIX);
-    // Master volume should be in range 0x0000 - 0x3fff
-    spuSettings.mvol.left  = 0x3fff;
-    spuSettings.mvol.right = 0x3fff;
-    // Cd volume should be in range 0x0000 - 0x7fff
-    spuSettings.cd.volume.left = 0x7fff;
-    spuSettings.cd.volume.right = 0x7fff;
-    // Enable CD input ON
-    spuSettings.cd.mix = SPU_ON;
-    // Apply settings
-    SpuSetCommonAttr(&spuSettings);
-    // Set transfer mode 
-    SpuSetTransferMode(SPU_TRANSFER_BY_DMA);
+    
+    SPUInitialization();
     // CD Playback setup
     // Play second audio track
     // Get CD TOC
@@ -66,6 +52,7 @@ void initCDAudio(){
     // Set CD parameters ; Report Mode ON, CD-DA ON. See LibeOver47.pdf, p.188
     param[0] = CdlModeRept|CdlModeDA;
     CdControl(CdlSetmode, param, 0);	/* set mode */
+    printf("CD Audio Initialized!!\n");
     #else
     printf("CD audio NOT INIT, debug mode on\n");
     #endif

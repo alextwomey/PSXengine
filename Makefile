@@ -8,6 +8,8 @@ program/constants.c \
 program/readFromCD.c \
 program/2D.c \
 program/pad.c \
+program/SPU.c \
+program/sound.c \
 
 CPPFLAGS += -Ithird_party/psyq-iwyu/include
 LDFLAGS += -Lthird_party/psyq/lib
