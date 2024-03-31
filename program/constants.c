@@ -13,7 +13,7 @@
 
 short db = 0;  
 int myActiveBuff=0;
-long* cdData[5];
+long* cdData[20];
 unsigned char ramAddr[0x00100000];
 Color BGColor;
 GsOT orderingTable[2];
@@ -41,6 +41,7 @@ void init()
 	printf("***RELEASE MODE***\n");
 	#else
 	printf("===DEBUG MODE===\n");
+	#endif
 	//ResetGraph(0);
 	SetVideoMode(0);
 	printf("Video mode is(%ld)\n",GetVideoMode());
@@ -69,7 +70,6 @@ void init()
 	//0 = No Fog
 	//1 = Fog
 	GsSetLightMode(1);
-	#endif
 }
 
 void clear_display() {

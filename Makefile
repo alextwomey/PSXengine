@@ -8,6 +8,7 @@ program/constants.c \
 program/readFromCD.c \
 program/2D.c \
 program/pad.c \
+program/SPU.c \
 
 CPPFLAGS += -Ithird_party/psyq-iwyu/include
 LDFLAGS += -Lthird_party/psyq/lib
@@ -35,5 +36,6 @@ LDFLAGS += -lsnd
 LDFLAGS += -lspu
 LDFLAGS += -ltap
 LDFLAGS += -Wl,--end-group
+LDFLAGS += -lgcc
 
 include third_party/nugget/common.mk
