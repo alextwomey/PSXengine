@@ -22,7 +22,7 @@ void controls();
 void update();
 
 GsSPRITE myBgSprite;
-
+int seconds = 0;
 struct{
     bool left;
     bool right;
@@ -32,6 +32,7 @@ struct{
 
 //main program 
 int main(void){   
+    
     initMyHeap();
     // Init display
     init();   
@@ -47,12 +48,12 @@ int main(void){
     readFromCd("YOSHI.TMD",&cdData[2]);
     readFromCd("HELO.DAT",&cdData[3]);
     readFromCd("GRAD.TIM",&cdData[4]);
-    readFromCd("0_COME.VAG",&cdData[5]);
+    readFromCd("8_YOOO.VAG",&cdData[5]);
     initCDAudio();
     playMusicFromCD(2);
   
     create_sprite((u_char*)cdData[4],0,0,&myBgSprite,1);
-    loadVag(cdData[5], 0);
+    loadVag((u_char*)cdData[5], 0);
     myBgSprite.x = SCREENLEFTX;
     myBgSprite.y = SCREENTOPY;
     myBgSprite.w = SCREENXRES;
@@ -60,10 +61,8 @@ int main(void){
 
     while (1)  // infinite loop
     {   
-        
         if(count % 60 == 0){
-            
-            FntPrint("SECOND\n");
+            seconds++;
         }
         update();
         render();
@@ -78,6 +77,7 @@ void render() {
     FntPrint("Hello CDDA !\n");  // Send string to print stream
     //FntPrint("Playback status: %d\n", result[1]);  // Send string to print stream
     FntPrint("Count: %d\n", count);
+    FntPrint("Seconds: %d\n", seconds);
     FntPrint("\nSet Start addr    : %08x", vag_spu_address);
     FntPrint("\nReturn start addr : %08x", spu_start_address);      
     FntPrint("\nGet Start  addr   : %08x", get_start_addr);  
@@ -88,12 +88,15 @@ void render() {
     }
     if(pad.down){
         FntPrint("PAD DOWN PRESSED!!!\n");
+        playSFX();
     }
     if(pad.right){
         FntPrint("PAD RIGHT PRESSED!!!\n");
+        playSFX();
     }
     if(pad.up){
         FntPrint("PAD UP PRESSED!!!\n");
+        playSFX();
     }
     GsSortFastSprite(&myBgSprite, &orderingTable[myActiveBuff], 0);
     display();

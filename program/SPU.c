@@ -1,6 +1,7 @@
 #include "SPU.h"
 #include "constants.h"
 
+
 // SPU attributes
 SpuCommonAttr spuSettings;
 SpuVoiceAttr  voiceAttributes ;          // structure for changing individual voice attributes
@@ -10,8 +11,11 @@ u_long spu_start_address;
 u_long get_start_addr;
 u_long transSize;  
 
+char spu_malloc_rec[SPU_MALLOC_RECSIZ * (MALLOC_MAX+1)];
+
 void SPUInitialization(){
     SpuInit();
+    SpuInitMalloc(MALLOC_MAX, spu_malloc_rec);
     // Set master & CD volume to max
     spuSettings.mask = (SPU_COMMON_MVOLL | SPU_COMMON_MVOLR | SPU_COMMON_CDVOLL | SPU_COMMON_CDVOLR | SPU_COMMON_CDMIX);
     // Master volume should be in range 0x0000 - 0x3fff
@@ -21,19 +25,12 @@ void SPUInitialization(){
     spuSettings.cd.volume.left = 0x7fff;
     spuSettings.cd.volume.right = 0x7fff;
     // Enable CD input ON
-    spuSettings.cd.mix = SPU_ON;
+    spuSettings.cd.mix = SPU_OFF;
     // Apply settings
     SpuSetCommonAttr(&spuSettings);
     // Set transfer mode 
     SpuSetTransferMode(SPU_TRANSFER_BY_DMA);
     SpuSetIRQ(SPU_OFF);
-}
-
-u_long sendVAGtoRAM(unsigned int VAG_data_size, unsigned char *VAG_data){
-    u_long size;
-    size = SpuWrite(VAG_data, VAG_data_size);
-    SpuIsTransferCompleted(SPU_TRANSFER_WAIT);
-    return size;
 }
 
 void setVoiceAttr(unsigned int pitch, long channel, unsigned long soundAddr ){
@@ -69,14 +66,20 @@ void setVoiceAttr(unsigned int pitch, long channel, unsigned long soundAddr ){
 }
 
 void playSFX(void){
-    SpuSetKey(SpuOn,SPU_1CH);                               // Set several channels by ORing  each channel bit ; ex : SpuSetKey(SpuOn,SPU_0CH | SPU_3CH | SPU_8CH); channels 0, 3, 8 are on.
+    SpuSetKey(SpuOn,SPU_0CH);                               // Set several channels by ORing  each channel bit ; ex : SpuSetKey(SpuOn,SPU_0CH | SPU_3CH | SPU_8CH); channels 0, 3, 8 are on.
 }
 
-void loadVag(long* vagData,int channel){
+u_long sendVAGtoRAM(unsigned int VAG_data_size, u_char *VAG_data){
+    u_long size;
+    size = SpuWrite(VAG_data + sizeof(VAGhdr), VAG_data_size);
+    SpuIsTransferCompleted(SPU_TRANSFER_WAIT);
+    return size;
+}
+
+void loadVag(u_char *vagData,int channel){
     const VAGhdr * VAGfileHeader = (VAGhdr*)vagData;
-    unsigned int pitch = (__builtin_bswap32(VAGfileHeader->samplingFrequency)<<12 / 44100L); 
-    //unsigned int pitch = VAGfileHeader->samplingFrequency / 44100L; 
-    printf("PITCH:%i\n",pitch);
+    unsigned int pitch = (__builtin_bswap32(VAGfileHeader->samplingFrequency)<<12) / 44100L; 
+    printf("PITCH:%08x\n",pitch);
     printf("data Size: %i\n",__builtin_bswap32(VAGfileHeader->dataSize));
     vag_spu_address = SpuMalloc(__builtin_bswap32(VAGfileHeader->dataSize));
     printf("Vag_SPU_ADDRESS: %08x\n",vag_spu_address);
@@ -86,6 +89,6 @@ void loadVag(long* vagData,int channel){
     printf("getStart Addr: %08x\n",get_start_addr);
     transSize = sendVAGtoRAM(__builtin_bswap32((VAGfileHeader->dataSize)), vagData);
     printf("TransferSize: %08x\n",transSize);
-    setVoiceAttr(pitch, SPU_1CH,vag_spu_address);
+    setVoiceAttr(pitch, SPU_0CH,vag_spu_address);
     
 }
