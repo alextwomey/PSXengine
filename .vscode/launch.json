@@ -19,7 +19,7 @@
       },
       "executable": "${workspaceRoot}/psxeg.elf",
       "autorun": [
-        "monitor reset shellhalt",
+        "monitor reset hard shellhalt",
         "load psxeg.elf",
         "tbreak main",
         "continue"

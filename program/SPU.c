@@ -5,6 +5,7 @@
 // SPU attributes
 SpuCommonAttr spuSettings;
 SpuVoiceAttr  voiceAttributes ;          // structure for changing individual voice attributes
+SpuReverbAttr reverbAttributes;
 u_long vag_spu_address;                  // address allocated in memory for first sound file
 // DEBUG : these allow printing values for debugging
 u_long spu_start_address;                
@@ -67,6 +68,22 @@ void setVoiceAttr(unsigned int pitch, long channel, unsigned long soundAddr ){
 }
 
 void playSFX(VAGsound * sound){
+    /* REVERB STUFF
+    SpuSetReverb(SPU_ON);
+    reverbAttributes.mask=(
+        SPU_REV_MODE |
+        SPU_REV_DEPTHL |
+        SPU_REV_DEPTHR |
+        SPU_REV_DELAYTIME |
+        SPU_REV_FEEDBACK 
+    );
+    reverbAttributes.mode = SPU_REV_MODE_MAX;
+    reverbAttributes.depth.left = 0x01;
+    reverbAttributes.depth.right = 0x01;
+    reverbAttributes.delay = 0x01;
+    reverbAttributes.feedback = 0x01;
+    SpuSetReverbModeParam(&reverbAttributes);
+    */
     SpuSetKey(SpuOn,sound->spu_channel);                               // Set several channels by ORing  each channel bit ; ex : SpuSetKey(SpuOn,SPU_0CH | SPU_3CH | SPU_8CH); channels 0, 3, 8 are on.
 }
 
@@ -93,3 +110,8 @@ u_long loadVag(VAGsound * sound){
     setVoiceAttr(pitch, sound->spu_channel,vag_spu_address);
     return vag_spu_address;
 }
+
+VAGsound createVAGsound(u_char * VAGfile, u_long spu_channel, u_long spu_address){
+    VAGsound newSound = {VAGfile,spu_channel,spu_address};
+    return newSound;
+    }

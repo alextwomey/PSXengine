@@ -22,6 +22,7 @@ typedef struct VAGsound {
 
 extern SpuCommonAttr spuSettings;
 extern SpuVoiceAttr  voiceAttributes ;          // structure for changing individual voice attributes
+extern SpuReverbAttr reverbAttributes;                 // reverb struct
 extern u_long vag_spu_address;                  // address allocated in memory for first sound file
 // DEBUG : these allow printing values for debugging
 extern u_long spu_start_address;                
@@ -39,3 +40,4 @@ u_long sendVAGtoRAM(unsigned int VAG_data_size, u_char *VAG_data);
 void setVoiceAttr(unsigned int pitch, long channel, unsigned long soundAddr );
 void playSFX(VAGsound * sound);
 u_long loadVag(VAGsound * sound);
+VAGsound createVAGsound(u_char * VAGfile, u_long spu_channel, u_long spu_address);

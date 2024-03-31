@@ -59,14 +59,11 @@ int main(void){
     readFromCd("2_erro.vag",&cdData[8]);
     initCDAudio();
     playMusicFromCD(2);
-    VAGsound yoo = {(u_char*)cdData[5],SPU_00CH,0};
-    VAGsound come = {(u_char*)cdData[6],SPU_01CH,0};
-    VAGsound cuek = {(u_char*)cdData[7],SPU_02CH,0};
-    VAGsound erro = {(u_char*)cdData[8],SPU_03CH,0};
-    soundBank[0]= cuek;
-    soundBank[1]= erro;
-    soundBank[2]= come;
-    soundBank[3]= yoo;
+    
+    soundBank[0]= createVAGsound((u_char*)cdData[5],SPU_00CH,0);
+    soundBank[1]= createVAGsound((u_char*)cdData[6],SPU_01CH,0);
+    soundBank[2]= createVAGsound((u_char*)cdData[7],SPU_02CH,0);
+    soundBank[3]= createVAGsound((u_char*)cdData[8],SPU_03CH,0);
     for(int i = 0; i < 4; i++){
         soundBank[i].spu_address = loadVag(&soundBank[i]);
         printf("Address: %lu, channel: %lu\n",soundBank[i].spu_address,soundBank[i].spu_channel);
