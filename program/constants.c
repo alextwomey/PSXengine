@@ -13,7 +13,7 @@
 
 short db = 0;  
 int myActiveBuff=0;
-long* cdData[6];
+long* cdData[20];
 unsigned char ramAddr[0x00100000];
 Color BGColor;
 GsOT orderingTable[2];

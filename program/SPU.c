@@ -10,6 +10,7 @@ u_long vag_spu_address;                  // address allocated in memory for firs
 u_long spu_start_address;                
 u_long get_start_addr;
 u_long transSize;  
+VAGsound soundBank[20];
 
 char spu_malloc_rec[SPU_MALLOC_RECSIZ * (MALLOC_MAX+1)];
 
@@ -65,8 +66,8 @@ void setVoiceAttr(unsigned int pitch, long channel, unsigned long soundAddr ){
     SpuSetVoiceAttr(&voiceAttributes);                      // set attributes
 }
 
-void playSFX(void){
-    SpuSetKey(SpuOn,SPU_0CH);                               // Set several channels by ORing  each channel bit ; ex : SpuSetKey(SpuOn,SPU_0CH | SPU_3CH | SPU_8CH); channels 0, 3, 8 are on.
+void playSFX(VAGsound * sound){
+    SpuSetKey(SpuOn,sound->spu_channel);                               // Set several channels by ORing  each channel bit ; ex : SpuSetKey(SpuOn,SPU_0CH | SPU_3CH | SPU_8CH); channels 0, 3, 8 are on.
 }
 
 u_long sendVAGtoRAM(unsigned int VAG_data_size, u_char *VAG_data){
@@ -76,8 +77,8 @@ u_long sendVAGtoRAM(unsigned int VAG_data_size, u_char *VAG_data){
     return size;
 }
 
-void loadVag(u_char *vagData,int channel){
-    const VAGhdr * VAGfileHeader = (VAGhdr*)vagData;
+u_long loadVag(VAGsound * sound){
+    const VAGhdr * VAGfileHeader = sound->VAGfile;
     unsigned int pitch = (__builtin_bswap32(VAGfileHeader->samplingFrequency)<<12) / 44100L; 
     printf("PITCH:%08x\n",pitch);
     printf("data Size: %i\n",__builtin_bswap32(VAGfileHeader->dataSize));
@@ -87,8 +88,8 @@ void loadVag(u_char *vagData,int channel){
     printf("SPU Start Address:%08x\n",spu_start_address);
     get_start_addr = SpuGetTransferStartAddr();
     printf("getStart Addr: %08x\n",get_start_addr);
-    transSize = sendVAGtoRAM(__builtin_bswap32((VAGfileHeader->dataSize)), vagData);
+    transSize = sendVAGtoRAM(__builtin_bswap32((VAGfileHeader->dataSize)), sound->VAGfile);
     printf("TransferSize: %08x\n",transSize);
-    setVoiceAttr(pitch, SPU_0CH,vag_spu_address);
-    
+    setVoiceAttr(pitch, sound->spu_channel,vag_spu_address);
+    return vag_spu_address;
 }

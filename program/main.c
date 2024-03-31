@@ -28,7 +28,12 @@ struct{
     bool right;
     bool up;
     bool down;
+    bool prevLeft;
+    bool prevright;
+    bool prevUp;
+    bool prevDown;
 } pad;
+
 
 //main program 
 int main(void){   
@@ -49,15 +54,32 @@ int main(void){
     //readFromCd("HELO.DAT",&cdData[3]);
     readFromCd("GRAD.TIM",&cdData[4]);
     readFromCd("YOO.VAG",&cdData[5]);
+    readFromCd("0_come.vag",&cdData[6]);
+    readFromCd("1_cuek.vag",&cdData[7]);
+    readFromCd("2_erro.vag",&cdData[8]);
     initCDAudio();
     playMusicFromCD(2);
-  
+    VAGsound yoo = {(u_char*)cdData[5],SPU_00CH,0};
+    VAGsound come = {(u_char*)cdData[6],SPU_01CH,0};
+    VAGsound cuek = {(u_char*)cdData[7],SPU_02CH,0};
+    VAGsound erro = {(u_char*)cdData[8],SPU_03CH,0};
+    soundBank[0]= cuek;
+    soundBank[1]= erro;
+    soundBank[2]= come;
+    soundBank[3]= yoo;
+    for(int i = 0; i < 4; i++){
+        soundBank[i].spu_address = loadVag(&soundBank[i]);
+        printf("Address: %lu, channel: %lu\n",soundBank[i].spu_address,soundBank[i].spu_channel);
+    }
+
     create_sprite((u_char*)cdData[4],0,0,&myBgSprite,1);
-    loadVag((u_char*)cdData[5], 0);
+    //loadVag((u_char*)cdData[5]);
     myBgSprite.x = SCREENLEFTX;
     myBgSprite.y = SCREENTOPY;
     myBgSprite.w = SCREENXRES;
     myBgSprite.h = SCREENYRES;
+
+
 
     while (1)  // infinite loop
     {   
@@ -83,20 +105,44 @@ void render() {
     FntPrint("\nGet Start  addr   : %08x", get_start_addr);  
     FntPrint("\nReturn size       : %08x\n", transSize); 
     if(pad.left){
+        if(!pad.prevLeft){
+            playSFX(&soundBank[0]);
+        }
+        pad.prevLeft = true;
         FntPrint("PAD LEFT PRESSED!!!\n");
-        playSFX();
+    }
+    if(!pad.left){
+        pad.prevLeft = false;
     }
     if(pad.down){
+        if(!pad.prevDown){
+            playSFX(&soundBank[2]);
+        }
+        pad.prevDown = true;
         FntPrint("PAD DOWN PRESSED!!!\n");
-        playSFX();
+    }
+    if(!pad.down){
+        pad.prevDown = false;
     }
     if(pad.right){
+        if(!pad.prevright){
+            playSFX(&soundBank[3]);
+        }
+        pad.prevright = true;
         FntPrint("PAD RIGHT PRESSED!!!\n");
-        playSFX();
+    }
+    if(!pad.right){
+        pad.prevright = false;
     }
     if(pad.up){
+        if(!pad.prevUp){
+            playSFX(&soundBank[1]);
+        }
+        pad.prevUp = true;
         FntPrint("PAD UP PRESSED!!!\n");
-        playSFX();
+    }
+    if(!pad.up){
+        pad.prevUp = false;
     }
     GsSortFastSprite(&myBgSprite, &orderingTable[myActiveBuff], 0);
     display();

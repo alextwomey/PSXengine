@@ -2,16 +2,7 @@
 #include <libspu.h>
 #include <libcd.h>
 
-#define MALLOC_MAX 3  
-
-extern SpuCommonAttr spuSettings;
-extern SpuVoiceAttr  voiceAttributes ;          // structure for changing individual voice attributes
-extern u_long vag_spu_address;                  // address allocated in memory for first sound file
-// DEBUG : these allow printing values for debugging
-extern u_long spu_start_address;                
-extern u_long get_start_addr;
-extern u_long transSize;  
-extern char spu_malloc_rec[SPU_MALLOC_RECSIZ * (MALLOC_MAX+1)]; 
+#define MALLOC_MAX 20
 
 typedef struct VAGheader{       // All the values in this header must be big endian
         char id[4];             // VAGp         4 bytes -> 1 char * 4
@@ -27,10 +18,24 @@ typedef struct VAGsound {
     u_char * VAGfile;        // Pointer to VAG data address
     u_long spu_channel;      // SPU voice to playback to
     u_long spu_address;      // SPU address for memory freeing spu mem
-    } VAGsound;
+} VAGsound;
+
+extern SpuCommonAttr spuSettings;
+extern SpuVoiceAttr  voiceAttributes ;          // structure for changing individual voice attributes
+extern u_long vag_spu_address;                  // address allocated in memory for first sound file
+// DEBUG : these allow printing values for debugging
+extern u_long spu_start_address;                
+extern u_long get_start_addr;
+extern u_long transSize;  
+extern char spu_malloc_rec[SPU_MALLOC_RECSIZ * (MALLOC_MAX+1)]; 
+//size of hhowever many sound effects you want loaded at
+//a time max of 512kb i think
+extern VAGsound soundBank[20];
+
+
 
 void SPUInitialization();
 u_long sendVAGtoRAM(unsigned int VAG_data_size, u_char *VAG_data);
 void setVoiceAttr(unsigned int pitch, long channel, unsigned long soundAddr );
-void playSFX(void);
-void loadVag(u_char* vagData, int channel);
+void playSFX(VAGsound * sound);
+u_long loadVag(VAGsound * sound);

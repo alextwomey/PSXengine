@@ -39,7 +39,7 @@ extern short db;                     // index of which buffer is used, values 0,
 //Store all your CD Files Here
 //the number is how many files
 //you eventually want to load.
-extern long* cdData[6];
+extern long* cdData[20];
 //cd audio
 extern GsOT orderingTable[2];
 extern GsOT_TAG	orderingTable_TAG[2][OT_ENTRIES];
