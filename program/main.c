@@ -43,12 +43,12 @@ int main(void){
     SPUInitialization();
     initCD();
 
-    readFromCd("YOSHI.TIM",&cdData[0]);
-    readFromCd("GRID.TMD",&cdData[1]);
-    readFromCd("YOSHI.TMD",&cdData[2]);
-    readFromCd("HELO.DAT",&cdData[3]);
+    //readFromCd("YOSHI.TIM",&cdData[0]);
+    //readFromCd("GRID.TMD",&cdData[1]);
+    //readFromCd("YOSHI.TMD",&cdData[2]);
+    //readFromCd("HELO.DAT",&cdData[3]);
     readFromCd("GRAD.TIM",&cdData[4]);
-    readFromCd("8_YOOO.VAG",&cdData[5]);
+    readFromCd("YOO.VAG",&cdData[5]);
     initCDAudio();
     playMusicFromCD(2);
   
