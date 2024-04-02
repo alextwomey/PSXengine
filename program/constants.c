@@ -11,6 +11,9 @@
 #include <STRINGS.H>
 #include "constants.h"
 
+
+GsDOBJ2 Object[MAX_OBJECTS];
+int ObjectCount;
 short db = 0;  
 int myActiveBuff=0;
 long* cdData[20];

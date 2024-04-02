@@ -33,6 +33,13 @@
 #define OT_ENTRIES	1<<OT_LENGTH
 #define PACKETMAX	2048
 
+// Maximum number of objects
+#define MAX_OBJECTS 100
+
+// Object handler
+extern GsDOBJ2	Object[MAX_OBJECTS];
+extern int ObjectCount;
+
 extern DISPENV disp[2];                 // Double buffered DISPENV and DRAWENV
 extern DRAWENV draw[2];
 extern short db;                     // index of which buffer is used, values 0, 1
@@ -68,6 +75,9 @@ typedef struct {
 } Color;
 
 extern Color BGColor;
+
+
+
 //Declare Stuff Here
 void clear_vram();
 void initMyHeap();

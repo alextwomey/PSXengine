@@ -16,12 +16,19 @@
 #include "2D.h"
 #include "pad.h"
 #include "SPU.h"
+#include "3D.h"
 
 void render();
 void controls();
 void update();
+void start();
 
 GsSPRITE myBgSprite;
+struct {
+    VECTOR position;
+    SVECTOR rotation;
+} myTestModel;
+
 int seconds = 0;
 struct{
     bool left;
@@ -48,9 +55,9 @@ int main(void){
     SPUInitialization();
     initCD();
 
-    //readFromCd("YOSHI.TIM",&cdData[0]);
+    readFromCd("YOSHI.TIM",&cdData[0]);
     //readFromCd("GRID.TMD",&cdData[1]);
-    //readFromCd("YOSHI.TMD",&cdData[2]);
+    readFromCd("YOSHI.TMD",&cdData[2]);
     //readFromCd("HELO.DAT",&cdData[3]);
     readFromCd("GRAD.TIM",&cdData[4]);
     readFromCd("YOO.VAG",&cdData[5]);
@@ -69,14 +76,25 @@ int main(void){
         printf("Address: %lu, channel: %lu\n",soundBank[i].spu_address,soundBank[i].spu_channel);
     }
 
-    create_sprite((u_char*)cdData[4],0,0,&myBgSprite,1);
-    //loadVag((u_char*)cdData[5]);
+    //create_sprite((u_char*)cdData[4],0,0,&myBgSprite,1);
+
+    //myTestModel = create3DModel((u_char*)cdData[2]);
+    
+
     myBgSprite.x = SCREENLEFTX;
     myBgSprite.y = SCREENTOPY;
     myBgSprite.w = SCREENXRES;
     myBgSprite.h = SCREENYRES;
 
+    myTestModel.position.vx = 3500;
+    myTestModel.position.vy = 924;
+    myTestModel.position.vz = -3500;
 
+
+    loadTexture((u_char*)cdData[0]);
+    start3D();
+    ObjectCount += LoadTMD(cdData[2],&Object[0],0);
+    
 
     while (1)  // infinite loop
     {   
@@ -88,6 +106,8 @@ int main(void){
     }
     return 0;
 }
+
+
 
 void render() {
 
@@ -101,6 +121,9 @@ void render() {
     FntPrint("\nReturn start addr : %08x", spu_start_address);      
     FntPrint("\nGet Start  addr   : %08x", get_start_addr);  
     FntPrint("\nReturn size       : %08x\n", transSize); 
+
+    RenderObject(myTestModel.position, myTestModel.rotation, &Object[0]);
+
     if(pad.left){
         if(!pad.prevLeft){
             playSFX(&soundBank[0]);
@@ -141,7 +164,7 @@ void render() {
     if(!pad.up){
         pad.prevUp = false;
     }
-    GsSortFastSprite(&myBgSprite, &orderingTable[myActiveBuff], 0);
+    //GsSortFastSprite(&myBgSprite, &orderingTable[myActiveBuff], 0);
     display();
 }
 
