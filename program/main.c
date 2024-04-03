@@ -28,6 +28,10 @@ struct {
     VECTOR position;
     SVECTOR rotation;
 } myTestModel;
+struct {
+    VECTOR position;
+    SVECTOR rotation;
+} myYoshiModel;
 
 int seconds = 0;
 struct{
@@ -56,7 +60,7 @@ int main(void){
     initCD();
 
     readFromCd("YOSHI.TIM",&cdData[0]);
-    //readFromCd("GRID.TMD",&cdData[1]);
+    readFromCd("GRID.TMD",&cdData[1]);
     readFromCd("YOSHI.TMD",&cdData[2]);
     //readFromCd("HELO.DAT",&cdData[3]);
     readFromCd("GRAD.TIM",&cdData[4]);
@@ -77,8 +81,6 @@ int main(void){
     }
 
     //create_sprite((u_char*)cdData[4],0,0,&myBgSprite,1);
-
-    //myTestModel = create3DModel((u_char*)cdData[2]);
     
 
     myBgSprite.x = SCREENLEFTX;
@@ -93,7 +95,8 @@ int main(void){
 
     loadTexture((u_char*)cdData[0]);
     start3D();
-    ObjectCount += LoadTMD(cdData[2],&Object[0],0);
+    ObjectCount += LoadTMD(cdData[1],&myObjects[0],0);
+    ObjectCount += LoadTMD(cdData[2],&myObjects[1],0);
     
 
     while (1)  // infinite loop
@@ -122,7 +125,10 @@ void render() {
     FntPrint("\nGet Start  addr   : %08x", get_start_addr);  
     FntPrint("\nReturn size       : %08x\n", transSize); 
 
-    RenderObject(myTestModel.position, myTestModel.rotation, &Object[0]);
+    //GsSortFastSprite(&myBgSprite, &orderingTable[myActiveBuff], 64);
+    CalculateCamera();
+   // RenderObject(myTestModel.position, myTestModel.rotation, &myObjects[0]);
+    RenderObject(myTestModel.position, myTestModel.rotation, &myObjects[1]);
 
     if(pad.left){
         if(!pad.prevLeft){
@@ -164,7 +170,7 @@ void render() {
     if(!pad.up){
         pad.prevUp = false;
     }
-    //GsSortFastSprite(&myBgSprite, &orderingTable[myActiveBuff], 0);
+    
     display();
 }
 

@@ -144,17 +144,3 @@ void readFromCd(unsigned char* filePath, long** file){
     //free3(dataBuffer);
     #endif
 }
-
-
-
-        // Print heap and buffer addresses
-       // FntPrint("Heap: %x - Buf: %x\n", ramAddr, dataBuffer);
-        // Print returned values
-       // FntPrint("CdCtrl: %d\nRead  : %d %d\n", CtrlResult[0], CDreadOK, CDreadResult);
-        // Print filesize in bytes/sectors
-       // FntPrint("Size: %dB sectors: %d", filePos.size, BtoS(filePos.size));
-    // Get current track number ~ every second
-            // See LibeOver47.pdf, p.188
-           // CdReady(1, &result[0]);
-            // current track number can also be obtained with 
-           // CdControl(CdlGetlocP, 0, &result[0]);

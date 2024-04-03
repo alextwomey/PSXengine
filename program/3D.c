@@ -8,22 +8,7 @@ Color sunColor;
 VECTOR sunDirection;
 GsF_LIGHT sunLight[1];
 
-ModelStruct create3DModel(u_char * modelData){
-    printf("Creating 3d MODEL!\n");
-    ModelStruct newModel = {};
-    //modelData++;
-    GsMapModelingData((u_long *)modelData);
-    GsInitCoordinate2(WORLD,&newModel.gsObjectCoord);
-    //increment pointer twice more??
-    //modelData++;modelData++;
-    GsLinkObject4((unsigned long)&modelData,&newModel.gsObjectHandler,0);
-    newModel.gsObjectHandler.coord2 = &newModel.gsObjectCoord;
-    newModel.gsObjectCoord.coord.t[0] = 0;
-    newModel.gsObjectCoord.coord.t[1] = 0;
-    newModel.gsObjectCoord.coord.t[2] = 0;
-    newModel.gsObjectCoord.flg = 0;
-    return newModel;
-}
+
 
 void setAmbientLight(int r, int g, int b){
     ambientLightColor = createColor(r,g,b);

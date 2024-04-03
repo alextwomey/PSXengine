@@ -12,7 +12,7 @@
 #include "constants.h"
 
 
-GsDOBJ2 Object[MAX_OBJECTS];
+GsDOBJ2 myObjects[MAX_OBJECTS];
 int ObjectCount;
 short db = 0;  
 int myActiveBuff=0;
@@ -23,6 +23,7 @@ GsOT orderingTable[2];
 GsOT_TAG orderingTable_TAG[2][OT_ENTRIES];
 PACKET GPUOutputPacket[2][PACKETMAX*24];
 Camera myCamera;
+
 //Creates a color from RGB
 Color createColor(int r, int g, int b) {
 	Color color = {.r = r, .g = g, .b = b};
@@ -94,5 +95,5 @@ void display() {
 	//was 0, 64, 0
 	GsSortClear(BGColor.r, BGColor.g, BGColor.b, &orderingTable[myActiveBuff]);
 	GsDrawOt(&orderingTable[myActiveBuff]);
-	myActiveBuff = myActiveBuff^1;
+	//myActiveBuff = myActiveBuff^1;
 }

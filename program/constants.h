@@ -37,7 +37,7 @@
 #define MAX_OBJECTS 100
 
 // Object handler
-extern GsDOBJ2	Object[MAX_OBJECTS];
+extern GsDOBJ2	myObjects[MAX_OBJECTS];
 extern int ObjectCount;
 
 extern DISPENV disp[2];                 // Double buffered DISPENV and DRAWENV
@@ -47,7 +47,7 @@ extern short db;                     // index of which buffer is used, values 0,
 //the number is how many files
 //you eventually want to load.
 extern long* cdData[20];
-//cd audio
+
 extern GsOT orderingTable[2];
 extern GsOT_TAG	orderingTable_TAG[2][OT_ENTRIES];
 extern int myActiveBuff;
@@ -67,6 +67,7 @@ typedef struct {
 	GsCOORDINATE2 coord2;
 } Camera;
 extern Camera myCamera;
+
 
 typedef struct {
 	int r;
