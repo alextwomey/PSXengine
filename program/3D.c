@@ -90,7 +90,7 @@ void RenderObject(VECTOR pos, SVECTOR rot, GsDOBJ2 *obj) {
 	GsSetLsMatrix(&omtx);
 
 	// Sort the object!
-	GsSortObject4(obj, &orderingTable[myActiveBuff], 14-OT_LENGTH, getScratchAddr(0));
+	GsSortObject4(obj, &orderingTable[myActiveBuff], 1-OT_LENGTH, getScratchAddr(0));
 
 }
 

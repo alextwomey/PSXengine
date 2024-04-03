@@ -80,7 +80,7 @@ int main(void){
         printf("Address: %lu, channel: %lu\n",soundBank[i].spu_address,soundBank[i].spu_channel);
     }
 
-    //create_sprite((u_char*)cdData[4],0,0,&myBgSprite,1);
+    create_sprite((u_char*)cdData[4],0,0,&myBgSprite,1);
     
 
     myBgSprite.x = SCREENLEFTX;
@@ -88,9 +88,13 @@ int main(void){
     myBgSprite.w = SCREENXRES;
     myBgSprite.h = SCREENYRES;
 
-    myTestModel.position.vx = 3500;
-    myTestModel.position.vy = 924;
-    myTestModel.position.vz = -3500;
+    myTestModel.position.vx = 0;
+    myTestModel.position.vy = 0;
+    myTestModel.position.vz = 0;
+
+    myYoshiModel.position.vx = 3500;
+    myYoshiModel.position.vy = 924;
+    myYoshiModel.position.vz = -3500;
 
 
     loadTexture((u_char*)cdData[0]);
@@ -117,7 +121,6 @@ void render() {
     clear_display();
     count ++;
     FntPrint("Hello CDDA !\n");  // Send string to print stream
-    //FntPrint("Playback status: %d\n", result[1]);  // Send string to print stream
     FntPrint("Count: %d\n", count);
     FntPrint("Seconds: %d\n", seconds);
     FntPrint("\nSet Start addr    : %08x", vag_spu_address);
@@ -125,10 +128,10 @@ void render() {
     FntPrint("\nGet Start  addr   : %08x", get_start_addr);  
     FntPrint("\nReturn size       : %08x\n", transSize); 
 
-    //GsSortFastSprite(&myBgSprite, &orderingTable[myActiveBuff], 64);
+    GsSortFastSprite(&myBgSprite, &orderingTable[myActiveBuff], 64);
     CalculateCamera();
-   // RenderObject(myTestModel.position, myTestModel.rotation, &myObjects[0]);
     RenderObject(myTestModel.position, myTestModel.rotation, &myObjects[1]);
+    RenderObject(myYoshiModel.position, myYoshiModel.rotation, &myObjects[0]);
 
     if(pad.left){
         if(!pad.prevLeft){
