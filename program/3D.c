@@ -63,7 +63,7 @@ void CalculateCamera() {
 
 }
 
-void RenderObject(VECTOR pos, SVECTOR rot, GsDOBJ2 *obj) {
+void RenderObject(VECTOR pos, SVECTOR rot, VECTOR sca, GsDOBJ2 *obj) {
 
 	MATRIX lmtx,omtx;
 	GsCOORDINATE2 coord;
@@ -78,6 +78,7 @@ void RenderObject(VECTOR pos, SVECTOR rot, GsDOBJ2 *obj) {
 	// Rotate and translate the matrix according to the specified coordinates
 	RotMatrix(&rot, &omtx);
 	TransMatrix(&omtx, &pos);
+	ScaleMatrix(&omtx,&sca);
 	CompMatrixLV(&myCamera.coord2.coord, &omtx, &coord.coord);
 	coord.flg = 0;
 

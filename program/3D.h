@@ -16,7 +16,7 @@ typedef struct{
 ModelStruct create3DModel(u_char * model);
 void start3D();
 int LoadTMD(u_long *tmd, GsDOBJ2 *obj, int enableLighting);
-void RenderObject(VECTOR pos, SVECTOR rot, GsDOBJ2 *obj);
+void RenderObject(VECTOR pos, SVECTOR rot, VECTOR sca, GsDOBJ2 *obj);
 void CalculateCamera();
 void setSunDirection(int x, int y, int z);
 void setSunColor(int r, int g, int b);

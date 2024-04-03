@@ -27,11 +27,23 @@ GsSPRITE myBgSprite;
 struct {
     VECTOR position;
     SVECTOR rotation;
+    VECTOR scale;
 } myTestModel;
 struct {
     VECTOR position;
     SVECTOR rotation;
+    VECTOR scale;
 } myYoshiModel;
+struct {
+    VECTOR position;
+    SVECTOR rotation;
+    VECTOR scale;
+} myYoshiModel2;
+struct {
+    VECTOR position;
+    SVECTOR rotation;
+    VECTOR scale;
+} myYoshiModel3;
 
 int seconds = 0;
 struct{
@@ -49,6 +61,7 @@ struct{
 //main program 
 int main(void){   
     
+
     initMyHeap();
     // Init display
     init();   
@@ -89,18 +102,40 @@ int main(void){
     myBgSprite.h = SCREENYRES;
 
     myTestModel.position.vx = 0;
-    myTestModel.position.vy = 0;
+    myTestModel.position.vy = -3500;
     myTestModel.position.vz = 0;
+    myTestModel.scale.vx = 1700;
+    myTestModel.scale.vy = 1700;
+    myTestModel.scale.vz = 1700;
 
     myYoshiModel.position.vx = 3500;
     myYoshiModel.position.vy = 924;
     myYoshiModel.position.vz = -3500;
+    myYoshiModel.scale.vx = 1700;
+    myYoshiModel.scale.vy = 1700;
+    myYoshiModel.scale.vz = 1700;
+
+    myYoshiModel2.position.vx = 4500;
+    myYoshiModel2.position.vy = 924;
+    myYoshiModel2.position.vz = -2500;
+    myYoshiModel2.scale.vx = 1700;
+    myYoshiModel2.scale.vy = 1700;
+    myYoshiModel2.scale.vz = 1700;
+    
+    myYoshiModel3.position.vx = 2500;
+    myYoshiModel3.position.vy = 524;
+    myYoshiModel3.position.vz = -4500;
+    myYoshiModel3.scale.vx = 1700;
+    myYoshiModel3.scale.vy = 1700;
+    myYoshiModel3.scale.vz = 1700;
 
 
     loadTexture((u_char*)cdData[0]);
     start3D();
-    ObjectCount += LoadTMD(cdData[1],&myObjects[0],0);
-    ObjectCount += LoadTMD(cdData[2],&myObjects[1],0);
+    ObjectCount += LoadTMD(cdData[1],&myObjects[0],0);//grid
+    ObjectCount += LoadTMD(cdData[2],&myObjects[1],0);//yoshi
+    ObjectCount += LoadTMD(cdData[2],&myObjects[2],0);//yoshi
+    ObjectCount += LoadTMD(cdData[2],&myObjects[3],0);//yoshi
     
 
     while (1)  // infinite loop
@@ -120,27 +155,30 @@ void render() {
 
     clear_display();
     count ++;
-    FntPrint("Hello CDDA !\n");  // Send string to print stream
-    FntPrint("Count: %d\n", count);
-    FntPrint("Seconds: %d\n", seconds);
-    FntPrint("\nSet Start addr    : %08x", vag_spu_address);
-    FntPrint("\nReturn start addr : %08x", spu_start_address);      
-    FntPrint("\nGet Start  addr   : %08x", get_start_addr);  
-    FntPrint("\nReturn size       : %08x\n", transSize); 
-
+    FntPrint("Count: %d, Seconds: %d\n",count,seconds);
+    FntPrint("FPS: %d\n", vsyncInterval);
+    FntPrint("Yoshi Location x: %d y: %d z: %d \n",myYoshiModel.position.vx,myYoshiModel.position.vy,myYoshiModel.position.vz);    
+    FntPrint("Yoshi Scale x: %d y: %d z: %d \n",myYoshiModel.scale.vx,myYoshiModel.scale.vy,myYoshiModel.scale.vz);    
+    FntPrint("Yoshi rotation x: %d y: %d z: %d \n",myYoshiModel.rotation.vx,myYoshiModel.rotation.vy,myYoshiModel.rotation.vz);    
     GsSortFastSprite(&myBgSprite, &orderingTable[myActiveBuff], 64);
     CalculateCamera();
-    //RenderObject(myTestModel.position, myTestModel.rotation, &myObjects[0]);
+
+    myTestModel.rotation.vy -=10;
+    
     myYoshiModel.rotation.vy += 10;
+    myYoshiModel2.rotation.vy -= 10;
+    myYoshiModel2.rotation.vz -= 10;
+    myYoshiModel3.rotation.vx -= 10;
 
-    RenderObject(myYoshiModel.position, myYoshiModel.rotation, &myObjects[1]);
-
+    RenderObject(myYoshiModel.position, myYoshiModel.rotation, myYoshiModel.scale,&myObjects[1]);
+    RenderObject(myYoshiModel2.position, myYoshiModel2.rotation, myYoshiModel2.scale,&myObjects[2]);
+    RenderObject(myYoshiModel3.position, myYoshiModel3.rotation, myYoshiModel3.scale,&myObjects[3]);
+    RenderObject(myTestModel.position, myTestModel.rotation, myTestModel.scale,&myObjects[0]);
     if(pad.left){
         if(!pad.prevLeft){
             playSFX(&soundBank[0]);
         }
         pad.prevLeft = true;
-        FntPrint("PAD LEFT PRESSED!!!\n");
     }
     if(!pad.left){
         pad.prevLeft = false;
@@ -150,7 +188,6 @@ void render() {
             playSFX(&soundBank[2]);
         }
         pad.prevDown = true;
-        FntPrint("PAD DOWN PRESSED!!!\n");
     }
     if(!pad.down){
         pad.prevDown = false;
@@ -160,7 +197,6 @@ void render() {
             playSFX(&soundBank[3]);
         }
         pad.prevright = true;
-        FntPrint("PAD RIGHT PRESSED!!!\n");
     }
     if(!pad.right){
         pad.prevright = false;
@@ -170,7 +206,6 @@ void render() {
             playSFX(&soundBank[1]);
         }
         pad.prevUp = true;
-        FntPrint("PAD UP PRESSED!!!\n");
     }
     if(!pad.up){
         pad.prevUp = false;

@@ -53,6 +53,9 @@ extern GsOT_TAG	orderingTable_TAG[2][OT_ENTRIES];
 extern int myActiveBuff;
 extern PACKET GPUOutputPacket[2][PACKETMAX*24];
 
+//long for fps tracking
+extern int vsyncInterval;
+
 // Define start address of allocated memory
 // Let's use an array so we don't have to worry about using a memory segment that's already in use.
 extern unsigned char ramAddr[0x00100000]; // https://discord.com/channels/642647820683444236/663664210525290507/864936962199781387

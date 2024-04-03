@@ -23,6 +23,7 @@ GsOT orderingTable[2];
 GsOT_TAG orderingTable_TAG[2][OT_ENTRIES];
 PACKET GPUOutputPacket[2][PACKETMAX*24];
 Camera myCamera;
+int vsyncInterval;
 
 //Creates a color from RGB
 Color createColor(int r, int g, int b) {
@@ -41,6 +42,7 @@ void initMyHeap(){
 
 void init()
 {
+	vsyncInterval = 0;
 	#ifdef _release_
 	printf("***RELEASE MODE***\n");
 	#else
@@ -63,7 +65,7 @@ void init()
 	GsClearOt(0, 0, &orderingTable[1]);
 	
 	FntLoad(960, 0);           // Load font to vram at 960,0(+128)
-    FntOpen(-120,0,SCREENXRES, SCREENYRES, 0, 512);
+    FntOpen(-150,-110,SCREENXRES, SCREENYRES, 0, 512);
 
 	// Setup 3D and projection matrix
 	GsInit3D();
@@ -89,7 +91,7 @@ void display() {
 	FntFlush(-1);
 
 	DrawSync(0);
-	VSync(0);
+	vsyncInterval=VSync(0);
 	GsSwapDispBuff();
 	//the first 3 numbers are the background color
 	//was 0, 64, 0
