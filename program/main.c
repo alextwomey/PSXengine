@@ -130,8 +130,10 @@ void render() {
 
     GsSortFastSprite(&myBgSprite, &orderingTable[myActiveBuff], 64);
     CalculateCamera();
-    RenderObject(myTestModel.position, myTestModel.rotation, &myObjects[1]);
-    RenderObject(myYoshiModel.position, myYoshiModel.rotation, &myObjects[0]);
+    //RenderObject(myTestModel.position, myTestModel.rotation, &myObjects[0]);
+    myYoshiModel.rotation.vy += 10;
+
+    RenderObject(myYoshiModel.position, myYoshiModel.rotation, &myObjects[1]);
 
     if(pad.left){
         if(!pad.prevLeft){
