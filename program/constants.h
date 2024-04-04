@@ -55,6 +55,9 @@ extern PACKET GPUOutputPacket[2][PACKETMAX*24];
 
 //long for fps tracking
 extern int vsyncInterval;
+extern int fps;
+extern int fps_counter;
+extern int fps_measure;
 
 // Define start address of allocated memory
 // Let's use an array so we don't have to worry about using a memory segment that's already in use.
@@ -80,7 +83,7 @@ typedef struct {
 
 extern Color BGColor;
 
-
+void vsync_cb();
 
 //Declare Stuff Here
 void clear_vram();

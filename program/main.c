@@ -46,6 +46,7 @@ struct {
 } myYoshiModel3;
 
 int seconds = 0;
+
 struct{
     bool left;
     bool right;
@@ -132,19 +133,21 @@ int main(void){
 
     loadTexture((u_char*)cdData[0]);
     start3D();
-    ObjectCount += LoadTMD(cdData[1],&myObjects[0],0);//grid
-    ObjectCount += LoadTMD(cdData[2],&myObjects[1],0);//yoshi
-    ObjectCount += LoadTMD(cdData[2],&myObjects[2],0);//yoshi
-    ObjectCount += LoadTMD(cdData[2],&myObjects[3],0);//yoshi
+    ObjectCount += LoadTMD(cdData[1],&myObjects[0],1);//grid
+    ObjectCount += LoadTMD(cdData[2],&myObjects[1],1);//yoshi
+    ObjectCount += LoadTMD(cdData[2],&myObjects[2],1);//yoshi
+    ObjectCount += LoadTMD(cdData[2],&myObjects[3],1);//yoshi
     
-
+    VSyncCallback(vsync_cb);
     while (1)  // infinite loop
     {   
+        count ++;
         if(count % 60 == 0){
             seconds++;
         }
         update();
         render();
+        fps_measure++;
     }
     return 0;
 }
@@ -154,9 +157,8 @@ int main(void){
 void render() {
 
     clear_display();
-    count ++;
-    FntPrint("Count: %d, Seconds: %d\n",count,seconds);
-    FntPrint("FPS: %d\n", vsyncInterval);
+    FntPrint("Count: %d, Seconds: %d \n",count,seconds);
+    FntPrint("FPS: %d\n", fps);
     FntPrint("Yoshi Location x: %d y: %d z: %d \n",myYoshiModel.position.vx,myYoshiModel.position.vy,myYoshiModel.position.vz);    
     FntPrint("Yoshi Scale x: %d y: %d z: %d \n",myYoshiModel.scale.vx,myYoshiModel.scale.vy,myYoshiModel.scale.vz);    
     FntPrint("Yoshi rotation x: %d y: %d z: %d \n",myYoshiModel.rotation.vx,myYoshiModel.rotation.vy,myYoshiModel.rotation.vz);    
@@ -184,6 +186,9 @@ void render() {
         pad.prevLeft = false;
     }
     if(pad.down){
+        myYoshiModel.scale.vx -= 10;
+        myYoshiModel.scale.vy -= 10;
+        myYoshiModel.scale.vz -= 10;
         if(!pad.prevDown){
             playSFX(&soundBank[2]);
         }
@@ -202,6 +207,9 @@ void render() {
         pad.prevright = false;
     }
     if(pad.up){
+        myYoshiModel.scale.vx += 10;
+        myYoshiModel.scale.vy += 10;
+        myYoshiModel.scale.vz += 10;
         if(!pad.prevUp){
             playSFX(&soundBank[1]);
         }
