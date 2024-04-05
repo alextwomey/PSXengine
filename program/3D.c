@@ -7,8 +7,7 @@ Color ambientLightColor;
 Color sunColor;
 VECTOR sunDirection;
 GsF_LIGHT sunLight[1];
-
-
+ModelStruct myObjects[MAX_OBJECTS];
 
 void setAmbientLight(int r, int g, int b){
     ambientLightColor = createColor(r,g,b);
@@ -63,7 +62,7 @@ void CalculateCamera() {
 
 }
 
-void RenderObject(VECTOR pos, SVECTOR rot, VECTOR sca, GsDOBJ2 *obj) {
+void RenderObject(ModelStruct *mod) {
 
 	MATRIX lmtx,omtx;
 	GsCOORDINATE2 coord;
@@ -73,29 +72,29 @@ void RenderObject(VECTOR pos, SVECTOR rot, VECTOR sca, GsDOBJ2 *obj) {
 
 	//Flip the Y axis so a positive value
 	//is up, and a negative value is down
-	pos.vy *= -1;
+	//mod->pos.vy *= -1;
 
 	// Rotate and translate the matrix according to the specified coordinates
-	RotMatrix(&rot, &omtx);
-	TransMatrix(&omtx, &pos);
-	ScaleMatrix(&omtx,&sca);
+	RotMatrix(&mod->rot, &omtx);
+	TransMatrix(&omtx, &mod->pos);
+	ScaleMatrix(&omtx,&mod->sca);
 	CompMatrixLV(&myCamera.coord2.coord, &omtx, &coord.coord);
 	coord.flg = 0;
 
 	// Apply coordinate matrix to the object
-	obj->coord2 = &coord;
+	mod->obj.coord2 = &coord;
 
 	// Calculate Local-World (for lighting) and Local-Screen (for projection) matrices and set both to the GTE
-	GsGetLws(obj->coord2, &lmtx, &omtx);
+	GsGetLws(mod->obj.coord2, &lmtx, &omtx);
 	GsSetLightMatrix(&lmtx);
 	GsSetLsMatrix(&omtx);
 
 	// Sort the object!
-	GsSortObject4(obj, &orderingTable[myActiveBuff], 1-OT_LENGTH, getScratchAddr(0));
+	GsSortObject4(&mod->obj, &orderingTable[myActiveBuff], 1-OT_LENGTH, getScratchAddr(0));
 
 }
 
-int LoadTMD(u_long *tmd, GsDOBJ2 *obj, int enableLighting) {
+int LoadTMD(u_long *tmd, ModelStruct *mod, int enableLighting) {
 
 	/*	This function prepares the specified TMD model for drawing and then
 		links it to a GsDOBJ2 structure so it can be drawn using GsSortObject4().
@@ -129,11 +128,11 @@ int LoadTMD(u_long *tmd, GsDOBJ2 *obj, int enableLighting) {
 	// Link object handler with the specified TMD
 	dop++;
 	for(i=0; i<NumObj; i++) {
-		GsLinkObject4((u_long)dop, &obj[i], i);
+		GsLinkObject4((u_long)dop, &mod->obj, i);
 		//connect the WORLD coordinate directly
 		//GsInitCoordinate2(WORLD,obj[i].coord2);
 		if (enableLighting == 0) {
-			obj[i].attribute = (1<<6);	// Disables light source calculation
+			mod->obj.attribute = (1<<6);	// Disables light source calculation
 		}
 	}
 

@@ -3,20 +3,26 @@
 #include <STDLIB.H>
 #include "constants.h"
 
+// Maximum number of objects
+#define MAX_OBJECTS 100
+typedef struct{
+    char name[10];
+    VECTOR pos;
+    SVECTOR rot;
+    VECTOR sca;
+    GsDOBJ2 obj;
+}ModelStruct;
+extern ModelStruct myObjects[];
+
 extern Color ambientLightColor;
 extern Color sunColor;
 extern VECTOR sunDirection;
 extern GsF_LIGHT sunLight[1];
 
-typedef struct{
-    GsDOBJ2 gsObjectHandler;
-    GsCOORDINATE2 gsObjectCoord;
-}ModelStruct;
-
 ModelStruct create3DModel(u_char * model);
 void start3D();
-int LoadTMD(u_long *tmd, GsDOBJ2 *obj, int enableLighting);
-void RenderObject(VECTOR pos, SVECTOR rot, VECTOR sca, GsDOBJ2 *obj);
+int LoadTMD(u_long *tmd, ModelStruct *mod, int enableLighting);
+void RenderObject(ModelStruct *mod);
 void CalculateCamera();
 void setSunDirection(int x, int y, int z);
 void setSunColor(int r, int g, int b);

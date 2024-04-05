@@ -11,9 +11,6 @@
 #include <STRINGS.H>
 #include "constants.h"
 
-
-GsDOBJ2 myObjects[MAX_OBJECTS];
-int ObjectCount;
 short db = 0;  
 int myActiveBuff=0;
 long* cdData[20];
@@ -112,6 +109,6 @@ void display() {
 	//was 0, 64, 0
 	GsSortClear(BGColor.r, BGColor.g, BGColor.b, &orderingTable[myActiveBuff]);
 	GsDrawOt(&orderingTable[myActiveBuff]);
-	//myActiveBuff = myActiveBuff^1;
-	vsyncInterval=VSync(-1);
+	myActiveBuff = myActiveBuff^1;
+
 }

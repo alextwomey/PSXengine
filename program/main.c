@@ -24,26 +24,6 @@ void update();
 void start();
 
 GsSPRITE myBgSprite;
-struct {
-    VECTOR position;
-    SVECTOR rotation;
-    VECTOR scale;
-} myTestModel;
-struct {
-    VECTOR position;
-    SVECTOR rotation;
-    VECTOR scale;
-} myYoshiModel;
-struct {
-    VECTOR position;
-    SVECTOR rotation;
-    VECTOR scale;
-} myYoshiModel2;
-struct {
-    VECTOR position;
-    SVECTOR rotation;
-    VECTOR scale;
-} myYoshiModel3;
 
 int seconds = 0;
 
@@ -62,7 +42,6 @@ struct{
 //main program 
 int main(void){   
     
-
     initMyHeap();
     // Init display
     init();   
@@ -102,41 +81,42 @@ int main(void){
     myBgSprite.w = SCREENXRES;
     myBgSprite.h = SCREENYRES;
 
-    myTestModel.position.vx = 0;
-    myTestModel.position.vy = -3500;
-    myTestModel.position.vz = 0;
-    myTestModel.scale.vx = 1700;
-    myTestModel.scale.vy = 1700;
-    myTestModel.scale.vz = 1700;
-
-    myYoshiModel.position.vx = 3500;
-    myYoshiModel.position.vy = 924;
-    myYoshiModel.position.vz = -3500;
-    myYoshiModel.scale.vx = 1700;
-    myYoshiModel.scale.vy = 1700;
-    myYoshiModel.scale.vz = 1700;
-
-    myYoshiModel2.position.vx = 4500;
-    myYoshiModel2.position.vy = 924;
-    myYoshiModel2.position.vz = -2500;
-    myYoshiModel2.scale.vx = 1700;
-    myYoshiModel2.scale.vy = 1700;
-    myYoshiModel2.scale.vz = 1700;
     
-    myYoshiModel3.position.vx = 2500;
-    myYoshiModel3.position.vy = 524;
-    myYoshiModel3.position.vz = -4500;
-    myYoshiModel3.scale.vx = 1700;
-    myYoshiModel3.scale.vy = 1700;
-    myYoshiModel3.scale.vz = 1700;
+    myObjects[0].pos.vx = 0;
+    myObjects[0].pos.vy = 3500;
+    myObjects[0].pos.vz = 0;
+    myObjects[0].sca.vx = 1700;
+    myObjects[0].sca.vy = 1700;
+    myObjects[0].sca.vz = 1700;
 
+    myObjects[1].pos.vx = 3500;
+    myObjects[1].pos.vy = -924;
+    myObjects[1].pos.vz = -3500;
+    myObjects[1].sca.vx = 1700;
+    myObjects[1].sca.vy = 1700;
+    myObjects[1].sca.vz = 1700;
+
+    myObjects[2].pos.vx = 4500;
+    myObjects[2].pos.vy = -924;
+    myObjects[2].pos.vz = -2500;
+    myObjects[2].sca.vx = 1700;
+    myObjects[2].sca.vy = 1700;
+    myObjects[2].sca.vz = 1700;
+    
+    myObjects[3].pos.vx = 2500;
+    myObjects[3].pos.vy = -524;
+    myObjects[3].pos.vz = -4500;
+    myObjects[3].sca.vx = 1700;
+    myObjects[3].sca.vy = 1700;
+    myObjects[3].sca.vz = 1700;
+    
 
     loadTexture((u_char*)cdData[0]);
     start3D();
-    ObjectCount += LoadTMD(cdData[1],&myObjects[0],1);//grid
-    ObjectCount += LoadTMD(cdData[2],&myObjects[1],1);//yoshi
-    ObjectCount += LoadTMD(cdData[2],&myObjects[2],1);//yoshi
-    ObjectCount += LoadTMD(cdData[2],&myObjects[3],1);//yoshi
+    LoadTMD(cdData[1],&myObjects[0],0);//grid
+    LoadTMD(cdData[2],&myObjects[1],0);//yoshi
+    LoadTMD(cdData[2],&myObjects[2],0);//yoshi
+    LoadTMD(cdData[2],&myObjects[3],0);//yoshi
     
     VSyncCallback(vsync_cb);
     while (1)  // infinite loop
@@ -159,23 +139,23 @@ void render() {
     clear_display();
     FntPrint("Count: %d, Seconds: %d \n",count,seconds);
     FntPrint("FPS: %d\n", fps);
-    FntPrint("Yoshi Location x: %d y: %d z: %d \n",myYoshiModel.position.vx,myYoshiModel.position.vy,myYoshiModel.position.vz);    
-    FntPrint("Yoshi Scale x: %d y: %d z: %d \n",myYoshiModel.scale.vx,myYoshiModel.scale.vy,myYoshiModel.scale.vz);    
-    FntPrint("Yoshi rotation x: %d y: %d z: %d \n",myYoshiModel.rotation.vx,myYoshiModel.rotation.vy,myYoshiModel.rotation.vz);    
+    FntPrint("Yoshi Location x: %d y: %d z: %d \n",myObjects[1].pos.vx,myObjects[1].pos.vy,myObjects[1].pos.vz);    
+    FntPrint("Yoshi Scale x: %d y: %d z: %d \n",myObjects[1].sca.vx,myObjects[1].sca.vy,myObjects[1].sca.vz);    
+    FntPrint("Yoshi rotation x: %d y: %d z: %d \n",myObjects[1].rot.vx,myObjects[1].rot.vy,myObjects[1].rot.vz);    
     GsSortFastSprite(&myBgSprite, &orderingTable[myActiveBuff], 64);
     CalculateCamera();
 
-    myTestModel.rotation.vy -=10;
+    myObjects[0].rot.vy -=10;
     
-    myYoshiModel.rotation.vy += 10;
-    myYoshiModel2.rotation.vy -= 10;
-    myYoshiModel2.rotation.vz -= 10;
-    myYoshiModel3.rotation.vx -= 10;
+    myObjects[1].rot.vy += 10;
+    myObjects[2].rot.vy -= 10;
+    myObjects[2].rot.vz -= 10;
+    myObjects[3].rot.vx -= 10;
 
-    RenderObject(myYoshiModel.position, myYoshiModel.rotation, myYoshiModel.scale,&myObjects[1]);
-    RenderObject(myYoshiModel2.position, myYoshiModel2.rotation, myYoshiModel2.scale,&myObjects[2]);
-    RenderObject(myYoshiModel3.position, myYoshiModel3.rotation, myYoshiModel3.scale,&myObjects[3]);
-    RenderObject(myTestModel.position, myTestModel.rotation, myTestModel.scale,&myObjects[0]);
+    RenderObject(&myObjects[1]);
+    RenderObject(&myObjects[2]);
+    RenderObject(&myObjects[3]);
+    RenderObject(&myObjects[0]);
     if(pad.left){
         if(!pad.prevLeft){
             playSFX(&soundBank[0]);
@@ -186,9 +166,9 @@ void render() {
         pad.prevLeft = false;
     }
     if(pad.down){
-        myYoshiModel.scale.vx -= 10;
-        myYoshiModel.scale.vy -= 10;
-        myYoshiModel.scale.vz -= 10;
+        myObjects[1].sca.vx -= 10;
+        myObjects[1].sca.vy -= 10;
+        myObjects[1].sca.vz -= 10;
         if(!pad.prevDown){
             playSFX(&soundBank[2]);
         }
@@ -207,9 +187,9 @@ void render() {
         pad.prevright = false;
     }
     if(pad.up){
-        myYoshiModel.scale.vx += 10;
-        myYoshiModel.scale.vy += 10;
-        myYoshiModel.scale.vz += 10;
+        myObjects[1].sca.vx += 10;
+        myObjects[1].sca.vy += 10;
+        myObjects[1].sca.vz += 10;
         if(!pad.prevUp){
             playSFX(&soundBank[1]);
         }
