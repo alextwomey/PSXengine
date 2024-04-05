@@ -98,12 +98,13 @@ int main(void){
     
     loadTexture((u_char*)cdData[0]);
     start3D();
+    InitializeAllLights();
     printf("5\n");
     //loadedObjects += LoadTMD(cdData[1],&myObjects[loadedObjects],0,loadedObjects);//grid
     //loadedObjects++;
-    loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],0,loadedObjects);//yoshi
-    loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],0,loadedObjects);//yoshi
-    loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],0,loadedObjects);//yoshi
+    loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi
+    loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi
+    loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi
     printf("6\n");
     VSyncCallback(vsync_cb);
     printf("7\n");
@@ -125,12 +126,12 @@ int main(void){
 void render() {
 
     clear_display();
-    FntPrint("Count: %d, Seconds: %d \n",count,seconds);
-    FntPrint("FPS: %d\n", fps);
+    FntPrint("Count: %d, Seconds: %d, FPS: %d \n",count,seconds,fps);
+    FntPrint("FrameTime: %d\n", frameTime);
     FntPrint("Yoshis: %d\n", loadedObjects);
-    FntPrint("Yoshi Location x: %d y: %d z: %d \n",myObjects[1].pos.vx,myObjects[1].pos.vy,myObjects[1].pos.vz);    
-    FntPrint("Yoshi Scale x: %d y: %d z: %d \n",myObjects[1].sca.vx,myObjects[1].sca.vy,myObjects[1].sca.vz);    
-    FntPrint("Yoshi rotation x: %d y: %d z: %d \n",myObjects[1].rot.vx,myObjects[1].rot.vy,myObjects[1].rot.vz);    
+    FntPrint("Yoshi Loc x: %d y: %d z: %d \n",myObjects[1].pos.vx,myObjects[1].pos.vy,myObjects[1].pos.vz);    
+    FntPrint("Yoshi sca x: %d y: %d z: %d \n",myObjects[1].sca.vx,myObjects[1].sca.vy,myObjects[1].sca.vz);    
+    FntPrint("Yoshi rot x: %d y: %d z: %d \n",myObjects[1].rot.vx,myObjects[1].rot.vy,myObjects[1].rot.vz);    
     GsSortFastSprite(&myBgSprite, &orderingTable[myActiveBuff], 64);
     CalculateCamera();
 
@@ -139,15 +140,9 @@ void render() {
     //setObjectRot(&myObjects[2],myObjects[2].rot.vx,myObjects[2].rot.vy -=10,myObjects[2].rot.vz-=10);
     //setObjectRot(&myObjects[3],myObjects[3].rot.vx,myObjects[3].rot.vy -=10,myObjects[3].rot.vz);
     
-    
-    for(int i = 0; i < loadedObjects; i++){
-        setObjectRot(&myObjects[i],myObjects[i].rot.vx,myObjects[i].rot.vy -=10,myObjects[i].rot.vz);
-        RenderObject(&myObjects[i]);
-    }
-    
     if(pad.left){
         if(!pad.prevLeft){
-            loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],0,loadedObjects);//yoshi
+            loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi
             setObjectPos(&myObjects[loadedObjects],defX+(loadedObjects*100),defY+(loadedObjects*100),defZ+(loadedObjects*100));
             setObjectSca(&myObjects[loadedObjects],1700,1700,1700);
             playSFX(&soundBank[0]);
@@ -187,6 +182,12 @@ void render() {
         pad.prevUp = false;
     }
     
+    for(int i = 0; i < loadedObjects; i++){
+        
+        setObjectRot(&myObjects[i],myObjects[i].rot.vx,myObjects[i].rot.vy -=10,myObjects[i].rot.vz);
+        RenderObject(&myObjects[i]);
+    }
+
     display();
 }
 

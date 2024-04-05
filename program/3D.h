@@ -21,6 +21,10 @@ extern Color sunColor;
 extern VECTOR sunDirection;
 extern GsF_LIGHT sunLight[1];
 
+void InitializeAllLights();
+void InitializeLight(GsF_LIGHT *flLight, int nLight, int nX, int nY, int nZ, int nRed, int nGreen, int nBlue);
+
+
 ModelStruct create3DModel(u_char * model);
 void start3D();
 int LoadTMD(u_long *tmd, ModelStruct *mod, int enableLighting,int loadedObj);

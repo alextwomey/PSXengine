@@ -24,6 +24,7 @@ int vsyncInterval;
 int fps = 0;
 int fps_counter;
 int fps_measure;
+int frameTime;
 
 void vsync_cb(){
 	fps_counter++;
@@ -101,9 +102,9 @@ void display() {
 	FntFlush(-1);
 
 	DrawSync(0);
-	VSync(0);
+	//VSync(0);
 	
-	
+	frameTime = VSync(0);
 	GsSwapDispBuff();
 	//the first 3 numbers are the background color
 	//was 0, 64, 0

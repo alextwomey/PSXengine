@@ -9,6 +9,7 @@ VECTOR sunDirection;
 GsF_LIGHT sunLight[1];
 ModelStruct myObjects[MAX_OBJECTS];
 int loadedObjects;
+GsF_LIGHT flLights[2];
 
 void setAmbientLight(int r, int g, int b){
     ambientLightColor = createColor(r,g,b);
@@ -61,6 +62,17 @@ void CalculateCamera() {
 	sunLight[0].r =	sunColor.r;	sunLight[0].g = sunColor.g;	sunLight[0].b = sunColor.b;
 	GsSetFlatLight(0, &sunLight[0]);
 
+}
+
+void InitializeAllLights(){
+	InitializeLight(&flLights[0],0,-1,-1,-1,255,120,255);
+	InitializeLight(&flLights[1],1,1,1,1,255,120,255);
+	GsSetAmbient(0,0,0);
+}
+void InitializeLight(GsF_LIGHT *flLight, int nLight, int nX, int nY, int nZ, int nRed, int nGreen, int nBlue){
+	flLight->vx=nX;flLight->vy=nY;flLight->vz=nZ;
+	flLight->r=nRed;flLight->g=nGreen;flLight->b=nBlue;
+	GsSetFlatLight(nLight, flLight);
 }
 
 void RenderObject(ModelStruct *mod) {
