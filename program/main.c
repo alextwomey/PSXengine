@@ -26,6 +26,9 @@ void start();
 GsSPRITE myBgSprite;
 
 int seconds = 0;
+int defX = 3500;
+int defY = -1000;
+int defZ = -3500;
 
 struct{
     bool left;
@@ -41,7 +44,7 @@ struct{
 
 //main program 
 int main(void){   
-    
+    loadedObjects = 0;
     initMyHeap();
     // Init display
     init();   
@@ -74,51 +77,36 @@ int main(void){
     }
 
     create_sprite((u_char*)cdData[4],0,0,&myBgSprite,1);
-    
-
+    printf("1\n");
     myBgSprite.x = SCREENLEFTX;
     myBgSprite.y = SCREENTOPY;
     myBgSprite.w = SCREENXRES;
     myBgSprite.h = SCREENYRES;
+    printf("1\n");
+    setObjectPos(&myObjects[0],0,3500,0);
+    setObjectSca(&myObjects[0],1700,1700,1700);
+    printf("2\n");
+    setObjectPos(&myObjects[1],3500,-924,-3500);
+    setObjectSca(&myObjects[1],1700,1700,1700);
+    printf("3\n");
+    setObjectPos(&myObjects[2],4500,-924,-2500);
+    setObjectSca(&myObjects[2],1700,1700,1700);
+    printf("4\n");
+    setObjectPos(&myObjects[3],2500,-524,-4500);
+    setObjectSca(&myObjects[3],1700,1700,1700);
 
     
-    myObjects[0].pos.vx = 0;
-    myObjects[0].pos.vy = 3500;
-    myObjects[0].pos.vz = 0;
-    myObjects[0].sca.vx = 1700;
-    myObjects[0].sca.vy = 1700;
-    myObjects[0].sca.vz = 1700;
-
-    myObjects[1].pos.vx = 3500;
-    myObjects[1].pos.vy = -924;
-    myObjects[1].pos.vz = -3500;
-    myObjects[1].sca.vx = 1700;
-    myObjects[1].sca.vy = 1700;
-    myObjects[1].sca.vz = 1700;
-
-    myObjects[2].pos.vx = 4500;
-    myObjects[2].pos.vy = -924;
-    myObjects[2].pos.vz = -2500;
-    myObjects[2].sca.vx = 1700;
-    myObjects[2].sca.vy = 1700;
-    myObjects[2].sca.vz = 1700;
-    
-    myObjects[3].pos.vx = 2500;
-    myObjects[3].pos.vy = -524;
-    myObjects[3].pos.vz = -4500;
-    myObjects[3].sca.vx = 1700;
-    myObjects[3].sca.vy = 1700;
-    myObjects[3].sca.vz = 1700;
-    
-
     loadTexture((u_char*)cdData[0]);
     start3D();
-    LoadTMD(cdData[1],&myObjects[0],0);//grid
-    LoadTMD(cdData[2],&myObjects[1],0);//yoshi
-    LoadTMD(cdData[2],&myObjects[2],0);//yoshi
-    LoadTMD(cdData[2],&myObjects[3],0);//yoshi
-    
+    printf("5\n");
+    //loadedObjects += LoadTMD(cdData[1],&myObjects[loadedObjects],0,loadedObjects);//grid
+    //loadedObjects++;
+    loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],0,loadedObjects);//yoshi
+    loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],0,loadedObjects);//yoshi
+    loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],0,loadedObjects);//yoshi
+    printf("6\n");
     VSyncCallback(vsync_cb);
+    printf("7\n");
     while (1)  // infinite loop
     {   
         count ++;
@@ -139,25 +127,29 @@ void render() {
     clear_display();
     FntPrint("Count: %d, Seconds: %d \n",count,seconds);
     FntPrint("FPS: %d\n", fps);
+    FntPrint("Yoshis: %d\n", loadedObjects);
     FntPrint("Yoshi Location x: %d y: %d z: %d \n",myObjects[1].pos.vx,myObjects[1].pos.vy,myObjects[1].pos.vz);    
     FntPrint("Yoshi Scale x: %d y: %d z: %d \n",myObjects[1].sca.vx,myObjects[1].sca.vy,myObjects[1].sca.vz);    
     FntPrint("Yoshi rotation x: %d y: %d z: %d \n",myObjects[1].rot.vx,myObjects[1].rot.vy,myObjects[1].rot.vz);    
     GsSortFastSprite(&myBgSprite, &orderingTable[myActiveBuff], 64);
     CalculateCamera();
 
-    myObjects[0].rot.vy -=10;
+    //setObjectRot(&myObjects[0],myObjects[0].rot.vx,myObjects[0].rot.vy -=10,myObjects[0].rot.vz);
+    //setObjectRot(&myObjects[1],myObjects[1].rot.vx,myObjects[1].rot.vy +=10,myObjects[1].rot.vz);
+    //setObjectRot(&myObjects[2],myObjects[2].rot.vx,myObjects[2].rot.vy -=10,myObjects[2].rot.vz-=10);
+    //setObjectRot(&myObjects[3],myObjects[3].rot.vx,myObjects[3].rot.vy -=10,myObjects[3].rot.vz);
     
-    myObjects[1].rot.vy += 10;
-    myObjects[2].rot.vy -= 10;
-    myObjects[2].rot.vz -= 10;
-    myObjects[3].rot.vx -= 10;
-
-    RenderObject(&myObjects[1]);
-    RenderObject(&myObjects[2]);
-    RenderObject(&myObjects[3]);
-    RenderObject(&myObjects[0]);
+    
+    for(int i = 0; i < loadedObjects; i++){
+        setObjectRot(&myObjects[i],myObjects[i].rot.vx,myObjects[i].rot.vy -=10,myObjects[i].rot.vz);
+        RenderObject(&myObjects[i]);
+    }
+    
     if(pad.left){
         if(!pad.prevLeft){
+            loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],0,loadedObjects);//yoshi
+            setObjectPos(&myObjects[loadedObjects],defX+(loadedObjects*100),defY+(loadedObjects*100),defZ+(loadedObjects*100));
+            setObjectSca(&myObjects[loadedObjects],1700,1700,1700);
             playSFX(&soundBank[0]);
         }
         pad.prevLeft = true;
@@ -166,9 +158,7 @@ void render() {
         pad.prevLeft = false;
     }
     if(pad.down){
-        myObjects[1].sca.vx -= 10;
-        myObjects[1].sca.vy -= 10;
-        myObjects[1].sca.vz -= 10;
+        //setObjectSca(&myObjects[1],myObjects[1].sca.vx-=10,myObjects[1].sca.vy-=10,myObjects[1].sca.vz-=10);
         if(!pad.prevDown){
             playSFX(&soundBank[2]);
         }
@@ -187,9 +177,7 @@ void render() {
         pad.prevright = false;
     }
     if(pad.up){
-        myObjects[1].sca.vx += 10;
-        myObjects[1].sca.vy += 10;
-        myObjects[1].sca.vz += 10;
+        //setObjectSca(&myObjects[1],myObjects[1].sca.vx+=10,myObjects[1].sca.vy+=10,myObjects[1].sca.vz+=10);
         if(!pad.prevUp){
             playSFX(&soundBank[1]);
         }

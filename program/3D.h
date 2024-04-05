@@ -11,8 +11,10 @@ typedef struct{
     SVECTOR rot;
     VECTOR sca;
     GsDOBJ2 obj;
+    int objNum;
 }ModelStruct;
-extern ModelStruct myObjects[];
+extern ModelStruct myObjects[MAX_OBJECTS];
+extern int loadedObjects;
 
 extern Color ambientLightColor;
 extern Color sunColor;
@@ -21,10 +23,13 @@ extern GsF_LIGHT sunLight[1];
 
 ModelStruct create3DModel(u_char * model);
 void start3D();
-int LoadTMD(u_long *tmd, ModelStruct *mod, int enableLighting);
+int LoadTMD(u_long *tmd, ModelStruct *mod, int enableLighting,int loadedObj);
 void RenderObject(ModelStruct *mod);
 void CalculateCamera();
 void setSunDirection(int x, int y, int z);
 void setSunColor(int r, int g, int b);
 void setAmbientLight(int r, int g, int b);
 void loadTexture(unsigned char imageData[]);
+void setObjectPos(ModelStruct* mod,int x, int y, int z);
+void setObjectRot(ModelStruct* mod,int x, int y, int z);
+void setObjectSca(ModelStruct* mod,int x, int y, int z);

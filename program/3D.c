@@ -8,6 +8,7 @@ Color sunColor;
 VECTOR sunDirection;
 GsF_LIGHT sunLight[1];
 ModelStruct myObjects[MAX_OBJECTS];
+int loadedObjects;
 
 void setAmbientLight(int r, int g, int b){
     ambientLightColor = createColor(r,g,b);
@@ -94,7 +95,7 @@ void RenderObject(ModelStruct *mod) {
 
 }
 
-int LoadTMD(u_long *tmd, ModelStruct *mod, int enableLighting) {
+int LoadTMD(u_long *tmd, ModelStruct *mod, int enableLighting, int loadedObj) {
 
 	/*	This function prepares the specified TMD model for drawing and then
 		links it to a GsDOBJ2 structure so it can be drawn using GsSortObject4().
@@ -127,6 +128,7 @@ int LoadTMD(u_long *tmd, ModelStruct *mod, int enableLighting) {
 
 	// Link object handler with the specified TMD
 	dop++;
+	mod->objNum = loadedObj;
 	for(i=0; i<NumObj; i++) {
 		GsLinkObject4((u_long)dop, &mod->obj, i);
 		//connect the WORLD coordinate directly
@@ -234,3 +236,18 @@ void loadTexture(unsigned char imageData[]) {
 	free3(tim_data);
 }
 
+void setObjectPos(ModelStruct* mod,int x, int y, int z){
+	mod->pos.vx = x;
+	mod->pos.vy = y;
+	mod->pos.vz = z;
+}
+void setObjectRot(ModelStruct* mod,int x, int y, int z){
+	mod->rot.vx = x;
+	mod->rot.vy = y;
+	mod->rot.vz = z;
+}
+void setObjectSca(ModelStruct* mod,int x, int y, int z){
+	mod->sca.vx = x;
+	mod->sca.vy = y;
+	mod->sca.vz = z;
+}
