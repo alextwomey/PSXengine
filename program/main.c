@@ -30,16 +30,7 @@ int defX = 3500;
 int defY = -1000;
 int defZ = -3500;
 
-struct{
-    bool left;
-    bool right;
-    bool up;
-    bool down;
-    bool prevLeft;
-    bool prevright;
-    bool prevUp;
-    bool prevDown;
-} pad;
+MyPad pad;
 
 
 //main program 
@@ -77,21 +68,21 @@ int main(void){
     }
 
     create_sprite((u_char*)cdData[4],0,0,&myBgSprite,1);
-    printf("1\n");
+
     myBgSprite.x = SCREENLEFTX;
     myBgSprite.y = SCREENTOPY;
     myBgSprite.w = SCREENXRES;
     myBgSprite.h = SCREENYRES;
-    printf("1\n");
+;
     setObjectPos(&myObjects[0],0,3500,0);
     setObjectSca(&myObjects[0],1700,1700,1700);
-    printf("2\n");
+
     setObjectPos(&myObjects[1],3500,-924,-3500);
     setObjectSca(&myObjects[1],1700,1700,1700);
-    printf("3\n");
+
     setObjectPos(&myObjects[2],4500,-924,-2500);
     setObjectSca(&myObjects[2],1700,1700,1700);
-    printf("4\n");
+
     setObjectPos(&myObjects[3],2500,-524,-4500);
     setObjectSca(&myObjects[3],1700,1700,1700);
 
@@ -99,15 +90,15 @@ int main(void){
     loadTexture((u_char*)cdData[0]);
     start3D();
     InitializeAllLights();
-    printf("5\n");
+
     //loadedObjects += LoadTMD(cdData[1],&myObjects[loadedObjects],0,loadedObjects);//grid
     //loadedObjects++;
     loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi
     loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi
     loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi
-    printf("6\n");
+
     VSyncCallback(vsync_cb);
-    printf("7\n");
+    
     while (1)  // infinite loop
     {   
         count ++;
@@ -131,7 +122,18 @@ void render() {
     FntPrint("Yoshis: %d\n", loadedObjects);
     FntPrint("Yoshi Loc x: %d y: %d z: %d \n",myObjects[1].pos.vx,myObjects[1].pos.vy,myObjects[1].pos.vz);    
     FntPrint("Yoshi sca x: %d y: %d z: %d \n",myObjects[1].sca.vx,myObjects[1].sca.vy,myObjects[1].sca.vz);    
-    FntPrint("Yoshi rot x: %d y: %d z: %d \n",myObjects[1].rot.vx,myObjects[1].rot.vy,myObjects[1].rot.vz);    
+    FntPrint("Yoshi rot x: %d y: %d z: %d \n",myObjects[1].rot.vx,myObjects[1].rot.vy,myObjects[1].rot.vz);   
+    FntPrint( "Pad 1 : %02x\nButtons:%02x %02x,\n Stick:RX:%d RY:%d LX:%d LY:%d\n",
+
+    
+                theControllers[0].type,             // Controller type : 00 == none,  41 == standard, 73 == analog/dualshock, 12 == mouse, 23 == steering wheel, 63 == gun, 53 == analog joystick
+                theControllers[0].button1,          // 
+                theControllers[0].button2,
+                pad.analogRightX,
+                pad.analogRightY,
+                pad.analogLeftX,
+                pad.analogLeftY );
+    FntPrint("LEFT: %d\n", pad.left);
     GsSortFastSprite(&myBgSprite, &orderingTable[myActiveBuff], 64);
     CalculateCamera();
 
@@ -141,6 +143,8 @@ void render() {
     //setObjectRot(&myObjects[3],myObjects[3].rot.vx,myObjects[3].rot.vy -=10,myObjects[3].rot.vz);
     
     if(pad.left){
+        printf("LEFT!123\n");   
+        FntPrint("LEFT\n");
         if(!pad.prevLeft){
             loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi
             setObjectPos(&myObjects[loadedObjects],defX+(loadedObjects*100),defY+(loadedObjects*100),defZ+(loadedObjects*100));
@@ -191,34 +195,9 @@ void render() {
     display();
 }
 
-void controls(){
-    if(padCheck(Pad1Left)){
-        pad.left = true;
-    }
-    else{
-        pad.left = false;
-    }
-    if(padCheck(Pad1Right)){
-        pad.right = true;
-    }
-    else{
-        pad.right = false;
-    }
-    if(padCheck(Pad1Up)){
-        pad.up = true;
-    }
-    else{
-        pad.up = false;
-    }
-    if(padCheck(Pad1Down)){
-        pad.down = true;
-    }
-    else{
-        pad.down = false;
-    }
-}
+
 
 void update(){
-    padUpdate();
-    controls();
+    updateControls(&theControllers[0],&pad);
+    
 }
