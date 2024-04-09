@@ -195,8 +195,6 @@ void render() {
     display();
 }
 
-
-
 void update(){
     updateControls(&theControllers[0],&pad);
     

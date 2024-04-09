@@ -20,19 +20,7 @@ void initializePad(){
     StartPAD();
 }
 
-void get_digital_direction( Controller_Data *c, int buttondata ) // get analog stick values
-{
-int i;
-    i = ~(buttondata);
-    if( i & 0x80 )
-        c->xpos -= 1;
-    if( i & 0x20 )
-        c->xpos += 1;
-    if( i & 0x40 )
-        c->ypos += 1;
-    if( i & 0x10 )
-        c->ypos -= 1;
-}
+
 void read_controller( Controller_Data *c, unsigned char *buf, int port )  // get the raw values from controller
 {
     register int mouse_x, mouse_y, x;
@@ -49,34 +37,7 @@ void read_controller( Controller_Data *c, unsigned char *buf, int port )  // get
         c->type = 0;
         return;
     }
-    // Look at the controller type code & process controller data as indicated
-    switch( c->type )
-    {
-        case 0x12:      // Sony Mouse
-            mouse_x = buf[4];
-            mouse_y = buf[5];
-            if( mouse_x & 0x80 )
-                mouse_x |= 0xffffff80;
-            if( mouse_y & 0x80 )
-                mouse_y |= 0xffffff80;
-            c->xpos += mouse_x;
-            c->ypos += mouse_y;
-            break;
-        case 0x23:      // Namco negCon
-                        // Steering wheel
-                        // Sankyo Pachinko controler
-            get_digital_direction( c, buf[2] );
-            break;
-        case 0x53:      // Analog 2-stick
-            get_digital_direction( c, buf[2] );
-            break;
-        case 0x41:      // Standard Sony PAD controller
-            get_digital_direction( c, buf[2] );
-            break;
-        default:        // If don't know what it is, treat it like standard controller
-            get_digital_direction( c, buf[2] );
-            break;
-    }
+    
 }
 
 void updateControls(Controller_Data *con, MyPad *pad){
@@ -85,44 +46,69 @@ void updateControls(Controller_Data *con, MyPad *pad){
     switch(con[0].button1){
         case 0xDF:                      // Right 
             pad->right = 1;
+            break;
         case 0x7F:                     // Left  
             pad->left = 1;
+            break;
         case 0xEF:                      // Up    
             pad->up = 1;
+            break;
         case 0xBF:                      // Down  
             pad->down = 1;
+            break;
         // Start & Select
         case 0xF7:
             pad->start = 1;
+            break;
         case 0xFE:                     // SELECT
             pad->select = 1;
+            break;
         // Dualshock L3 + R3
         case 0xFD:                      // L3
             pad->l3 = 1;
+            break;
         case 0xFB:                      //R3
             pad->r3 = 1;
-        
+            break;
+        case 0xFF:
+            pad->right = 0;
+            pad->left = 0;
+            pad->up = 0;
+            pad->down = 0;
+            pad->start = 0;
+            pad->select = 0;
+            pad->l3 = 0;
+            pad->r3 = 0;
+            break;
         }
         // Buttons
         switch(theControllers[0].button2){
             case 0xDF:                      // ⭘
                 pad->c = 1;
+                break;
             case 0x7F:                      // ⬜
                pad->s = 1;
+               break;
             case 0xEF:                      // △
                 pad->t = 1;
+                break;
             case 0xBF:                      // ╳
                 pad->x = 1; 
+                break;
                 
         // Shoulder buttons             
             case 0xFB:                       // L1
                 pad->l1 = 1;
+                break;
             case 0xFE:                       // L2
                 pad->l2 = 1;
+                break;
             case 0xF7:                       // R1
                 pad->r1 = 1;
+                break;
             case 0xFD:                       // R2
                 pad->r2 = 1;
+                break;
             case 0xFF:
                 pad->l1 = 0;
                 pad->l2 = 0;
@@ -132,6 +118,7 @@ void updateControls(Controller_Data *con, MyPad *pad){
                 pad->s = 0;
                 pad->t = 0;
                 pad->x = 0;
+                break;
         // Mouse buttons 
             case 0xF4:                      // Mouse Left click
                 
