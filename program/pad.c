@@ -9,6 +9,7 @@
 
 #include <libetc.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "pad.h"
 
@@ -41,8 +42,16 @@ void read_controller( Controller_Data *c, unsigned char *buf, int port )  // get
 }
 
 void updateControls(Controller_Data *con, MyPad *pad){
+    
     read_controller( &con[0], &controllers[0].pad[0], 0 );  // Read controllers
     normalizeSticks(&con[0], pad);
+    //printf("type: %d\n",con[0].type);
+    if(con[0].type != 115){
+        pad->analogLeftX = 0;
+        pad->analogRightX = 0;
+        pad->analogLeftY = 0;
+        pad->analogRightY = 0;
+    }
     switch(con[0].button1){
         case 0xDF:                      // Right 
             pad->right = 1;
@@ -129,18 +138,36 @@ void updateControls(Controller_Data *con, MyPad *pad){
 
 void normalizeSticks(Controller_Data *con, MyPad *pad){
     int rx;int ry;int lx;int ly;
-    rx = (con[0].analog2 * 256)/255;
-    ry = (con[0].analog3 * 256)/255;
-    lx = (con[0].analog0 * 256)/255;
-    ly = (con[0].analog1 * 256)/255;
+    rx = (con[0].analog0 * 256)/255;
+    ry = (con[0].analog1 * 256)/255;
+    lx = (con[0].analog2 * 256)/255;
+    ly = (con[0].analog3 * 256)/255;
     rx = (rx * 256) - (128 << 8);
     ry = (ry * 256) - (128 << 8);
     lx = (lx * 256) - (128 << 8);
     ly = (ly * 256) - (128 << 8);
-    pad->analogRightX = rx/255;
-    pad->analogRightY = ry/-255;
-    pad->analogLeftX = lx/255;
-    pad->analogLeftY = ly/-255;
+    rx = rx/255;
+    ry = ry/255;
+    lx = lx/255;
+    ly = ly/255;
+    if(abs(rx)<=25){
+        rx=0;
+    }else{
+        //linear interpolation between 20-128
+    }
+    if(abs(ry)<=25){
+        ry=0;
+    }
+    if(abs(lx)<=25){
+        lx=0;
+    }
+    if(abs(ly)<=25){
+        ly=0;
+    }
+    pad->analogLeftX = lx;
+    pad->analogLeftY = ly;
+    pad->analogRightX = rx;
+    pad->analogRightY = ry;
 }
 
 

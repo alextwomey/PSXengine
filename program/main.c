@@ -58,10 +58,10 @@ int main(void){
     initCDAudio();
     playMusicFromCD(2);
     
-    soundBank[0]= createVAGsound((u_char*)cdData[5],SPU_00CH,0);
-    soundBank[1]= createVAGsound((u_char*)cdData[6],SPU_01CH,0);
-    soundBank[2]= createVAGsound((u_char*)cdData[7],SPU_02CH,0);
-    soundBank[3]= createVAGsound((u_char*)cdData[8],SPU_03CH,0);
+    //soundBank[0]= createVAGsound((u_char*)cdData[5],SPU_00CH,0);
+    //soundBank[1]= createVAGsound((u_char*)cdData[6],SPU_01CH,0);
+    //soundBank[2]= createVAGsound((u_char*)cdData[7],SPU_02CH,0);
+    //soundBank[3]= createVAGsound((u_char*)cdData[8],SPU_03CH,0);
     for(int i = 0; i < 4; i++){
         soundBank[i].spu_address = loadVag(&soundBank[i]);
         printf("Address: %lu, channel: %lu\n",soundBank[i].spu_address,soundBank[i].spu_channel);
@@ -80,25 +80,17 @@ int main(void){
     setObjectPos(&myObjects[1],3500,-924,-3500);
     setObjectSca(&myObjects[1],1700,1700,1700);
 
-    setObjectPos(&myObjects[2],4500,-924,-2500);
-    setObjectSca(&myObjects[2],1700,1700,1700);
-
-    setObjectPos(&myObjects[3],2500,-524,-4500);
-    setObjectSca(&myObjects[3],1700,1700,1700);
-
-    
     loadTexture((u_char*)cdData[0]);
     start3D();
     InitializeAllLights();
-
-    //loadedObjects += LoadTMD(cdData[1],&myObjects[loadedObjects],0,loadedObjects);//grid
+    
+    loadedObjects += LoadTMD(cdData[1],&myObjects[loadedObjects],1,loadedObjects);//grid
     //loadedObjects++;
     loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi
-    loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi
-    loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi
+    //loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi
+    //loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi
 
     VSyncCallback(vsync_cb);
-    
     
     while (1)  // infinite loop
     {   
@@ -122,16 +114,16 @@ void render() {
     FntPrint("Yoshi Loc x: %d y: %d z: %d \n",myObjects[1].pos.vx,myObjects[1].pos.vy,myObjects[1].pos.vz);    
     FntPrint("Yoshi sca x: %d y: %d z: %d \n",myObjects[1].sca.vx,myObjects[1].sca.vy,myObjects[1].sca.vz);    
     FntPrint("Yoshi rot x: %d y: %d z: %d \n",myObjects[1].rot.vx,myObjects[1].rot.vy,myObjects[1].rot.vz);   
-    FntPrint( "Pad 1 : %02x\nButtons:%02x %02x,\n Stick:RX:%d RY:%d LX:%d LY:%d\n",
+    FntPrint( "Pad 1 : %02x\nButtons:%02x %02x,\n Stick:LX:%d LY:%d RX:%d RY:%d \n",
                 theControllers[0].type,             // Controller type : 00 == none,  41 == standard, 73 == analog/dualshock, 12 == mouse, 23 == steering wheel, 63 == gun, 53 == analog joystick
                 theControllers[0].button1,          // 
                 theControllers[0].button2,
-                pad.analogRightX,
-                pad.analogRightY,
                 pad.analogLeftX,
-                pad.analogLeftY );
+                pad.analogLeftY,
+                pad.analogRightX,
+                pad.analogRightY );
     GsSortFastSprite(&myBgSprite, &orderingTable[myActiveBuff], 64);
-    CalculateCamera();
+    
 
     //setObjectRot(&myObjects[0],myObjects[0].rot.vx,myObjects[0].rot.vy -=10,myObjects[0].rot.vz);
     //setObjectRot(&myObjects[1],myObjects[1].rot.vx,myObjects[1].rot.vy +=10,myObjects[1].rot.vz);
@@ -140,9 +132,9 @@ void render() {
     
     if(pad.left){
         if(!pad.prevLeft){
-            loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi
-            setObjectPos(&myObjects[loadedObjects],defX+(loadedObjects*100),defY+(loadedObjects*100),defZ+(loadedObjects*100));
-            setObjectSca(&myObjects[loadedObjects],1700,1700,1700);
+            //loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi
+            //setObjectPos(&myObjects[loadedObjects],defX+(loadedObjects*100),defY+(loadedObjects*100),defZ+(loadedObjects*100));
+            //setObjectSca(&myObjects[loadedObjects],1700,1700,1700);
             playSFX(&soundBank[0]);
         }
         pad.prevLeft = true;
@@ -151,7 +143,7 @@ void render() {
         pad.prevLeft = false;
     }
     if(pad.down){
-        //setObjectSca(&myObjects[1],myObjects[1].sca.vx-=10,myObjects[1].sca.vy-=10,myObjects[1].sca.vz-=10);
+        setObjectSca(&myObjects[1],myObjects[1].sca.vx-=fixedPointDivide(10, dt),myObjects[1].sca.vy-=fixedPointDivide(10, dt),myObjects[1].sca.vz-=fixedPointDivide(10, dt));
         if(!pad.prevDown){
             playSFX(&soundBank[2]);
         }
@@ -170,7 +162,7 @@ void render() {
         pad.prevright = false;
     }
     if(pad.up){
-        //setObjectSca(&myObjects[1],myObjects[1].sca.vx+=10,myObjects[1].sca.vy+=10,myObjects[1].sca.vz+=10);
+        setObjectSca(&myObjects[1],myObjects[1].sca.vx+=fixedPointDivide(10, dt),myObjects[1].sca.vy+=fixedPointDivide(10, dt),myObjects[1].sca.vz+=fixedPointDivide(10, dt));
         if(!pad.prevUp){
             playSFX(&soundBank[1]);
         }
@@ -179,10 +171,15 @@ void render() {
     if(!pad.up){
         pad.prevUp = false;
     }
-    
-    for(int i = 0; i < loadedObjects; i++){
-        
-        setObjectRot(&myObjects[i],myObjects[i].rot.vx,myObjects[i].rot.vy -=fixedPointDivide(10, dt),myObjects[i].rot.vz);
+    myCamera.rotation.vy -= fixedPointDivide(pad.analogRightX, dt);
+    myCamera.rotation.vx += fixedPointDivide(pad.analogRightY, dt);
+    myCamera.position.vx -= fixedPointDivide(pad.analogLeftX, dt);
+    myCamera.position.vz += fixedPointDivide(pad.analogLeftY, dt);
+    CalculateCamera();
+    //render all my objects
+    setObjectRot(&myObjects[1],myObjects[1].rot.vx,myObjects[1].rot.vy -=fixedPointDivide(10, dt),myObjects[1].rot.vz);
+    for(int i = loadedObjects; i >= 0; i--){
+        //setObjectRot(&myObjects[i],myObjects[i].rot.vx,myObjects[i].rot.vy -=fixedPointDivide(10, dt),myObjects[i].rot.vz);
         RenderObject(&myObjects[i]);
     }
 
@@ -192,5 +189,4 @@ void render() {
 void update(){
     dt = getDt();
     updateControls(&theControllers[0],&pad);
-    
 }
