@@ -32,6 +32,9 @@
 #define OT_LENGTH	12
 #define OT_ENTRIES	1<<OT_LENGTH
 #define PACKETMAX	2048
+#define FRACTIONAL_BITS 16
+#define FIXED_POINT_FACTOR (1 << FRACTIONAL_BITS)
+
 
 extern DISPENV disp[2];                 // Double buffered DISPENV and DRAWENV
 extern DRAWENV draw[2];
@@ -52,6 +55,7 @@ extern int fps;
 extern int fps_counter;
 extern int fps_measure;
 extern int frameTime;
+extern int dt;
 // Define start address of allocated memory
 // Let's use an array so we don't have to worry about using a memory segment that's already in use.
 extern unsigned char ramAddr[0x00100000]; // https://discord.com/channels/642647820683444236/663664210525290507/864936962199781387
@@ -91,3 +95,7 @@ void init(void);
 void clear_display(void);
 
 void display(void);
+
+int fixedPointDivide(int dividend, int divisor);
+
+int getDt();

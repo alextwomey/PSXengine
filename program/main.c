@@ -99,6 +99,7 @@ int main(void){
 
     VSyncCallback(vsync_cb);
     
+    
     while (1)  // infinite loop
     {   
         count ++;
@@ -116,7 +117,7 @@ void render() {
 
     clear_display();
     FntPrint("Count: %d, Seconds: %d, FPS: %d \n",count,seconds,fps);
-    FntPrint("FrameTime: %d\n", frameTime);
+    FntPrint("FrameTime: %d, DeltaTime: %d\n", frameTime,dt);
     FntPrint("Yoshis: %d\n", loadedObjects);
     FntPrint("Yoshi Loc x: %d y: %d z: %d \n",myObjects[1].pos.vx,myObjects[1].pos.vy,myObjects[1].pos.vz);    
     FntPrint("Yoshi sca x: %d y: %d z: %d \n",myObjects[1].sca.vx,myObjects[1].sca.vy,myObjects[1].sca.vz);    
@@ -181,7 +182,7 @@ void render() {
     
     for(int i = 0; i < loadedObjects; i++){
         
-        setObjectRot(&myObjects[i],myObjects[i].rot.vx,myObjects[i].rot.vy -=10,myObjects[i].rot.vz);
+        setObjectRot(&myObjects[i],myObjects[i].rot.vx,myObjects[i].rot.vy -=fixedPointDivide(10, dt),myObjects[i].rot.vz);
         RenderObject(&myObjects[i]);
     }
 
@@ -189,6 +190,7 @@ void render() {
 }
 
 void update(){
+    dt = getDt();
     updateControls(&theControllers[0],&pad);
     
 }

@@ -21,10 +21,11 @@ GsOT_TAG orderingTable_TAG[2][OT_ENTRIES];
 PACKET GPUOutputPacket[2][PACKETMAX*24];
 Camera myCamera;
 int vsyncInterval;
-int fps = 0;
+int fps = 60;
 int fps_counter;
 int fps_measure;
 int frameTime;
+int dt;
 
 void vsync_cb(){
 	fps_counter++;
@@ -97,14 +98,23 @@ void clear_display() {
 
 }
 
+int fixedPointDivide(int dividend, int divisor){
+	return (dividend * FIXED_POINT_FACTOR) / divisor;
+}
+
+int getDt(){
+	return dt = fixedPointDivide(fps, 60);
+}
+
 void display() {
 
 	FntFlush(-1);
-
+	//deltaTime = VSync(1);
 	DrawSync(0);
 	//VSync(0);
 	
 	frameTime = VSync(0);
+	
 	GsSwapDispBuff();
 	//the first 3 numbers are the background color
 	//was 0, 64, 0
