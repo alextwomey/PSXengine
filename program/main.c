@@ -10,6 +10,7 @@
 #include <sys/types.h>
 #include <STRINGS.H>
 #include <stdbool.h>
+#include "../third_party/isin.c"
 
 #include "constants.h"
 #include "readFromCD.h"
@@ -84,9 +85,9 @@ int main(void){
     start3D();
     InitializeAllLights();
     
-    loadedObjects += LoadTMD(cdData[1],&myObjects[loadedObjects],1,loadedObjects);//grid
+    loadedObjects += LoadTMD(cdData[1],&myObjects[loadedObjects],0,loadedObjects);//grid
     //loadedObjects++;
-    loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi
+    loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],0,loadedObjects);//yoshi
     //loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi
     //loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi
 
@@ -111,9 +112,10 @@ void render() {
     FntPrint("Count: %d, Seconds: %d, FPS: %d \n",count,seconds,fps);
     FntPrint("FrameTime: %d, DeltaTime: %d\n", frameTime,dt);
     FntPrint("Yoshis: %d\n", loadedObjects);
-    FntPrint("Yoshi Loc x: %d y: %d z: %d \n",myObjects[1].pos.vx,myObjects[1].pos.vy,myObjects[1].pos.vz);    
-    FntPrint("Yoshi sca x: %d y: %d z: %d \n",myObjects[1].sca.vx,myObjects[1].sca.vy,myObjects[1].sca.vz);    
-    FntPrint("Yoshi rot x: %d y: %d z: %d \n",myObjects[1].rot.vx,myObjects[1].rot.vy,myObjects[1].rot.vz);   
+    //FntPrint("Yoshi Loc x: %d y: %d z: %d \n",myObjects[1].pos.vx,myObjects[1].pos.vy,myObjects[1].pos.vz);
+    FntPrint("cam pos x: %d y: %d z: %d \n",myCamera.position.vx>>8,myCamera.position.vy>>8,myCamera.position.vz>>8);     
+    FntPrint("Cam Rot x: %d y: %d z: %d \n",myCamera.rotation.vx>>8,myCamera.rotation.vy>>8,myCamera.rotation.vz>>8);    
+      
     FntPrint( "Pad 1 : %02x\nButtons:%02x %02x,\n Stick:LX:%d LY:%d RX:%d RY:%d \n",
                 theControllers[0].type,             // Controller type : 00 == none,  41 == standard, 73 == analog/dualshock, 12 == mouse, 23 == steering wheel, 63 == gun, 53 == analog joystick
                 theControllers[0].button1,          // 
@@ -171,19 +173,45 @@ void render() {
     if(!pad.up){
         pad.prevUp = false;
     }
-    myCamera.rotation.vy -= fixedPointDivide(pad.analogRightX, dt);
-    myCamera.rotation.vx += fixedPointDivide(pad.analogRightY, dt);
-    myCamera.position.vx -= fixedPointDivide(pad.analogLeftX, dt);
-    myCamera.position.vz += fixedPointDivide(pad.analogLeftY, dt);
+
+    //rotation of camera
+    myCamera.rotation.vy -= fixedPointDivide((pad.analogRightX)>>2, dt);
+    if(myCamera.rotation.vx > 1000){
+        myCamera.rotation.vx = 1000;
+    }
+    if(myCamera.rotation.vx < -1000){
+        myCamera.rotation.vx = -1000;
+    }
+    myCamera.rotation.vx += fixedPointDivide((pad.analogRightY)>>2, dt);
+
+    //camera position
+    VECTOR tpos;
+    SVECTOR trot;
+    trot.vx = myCamera.rotation.vx;
+    trot.vy = myCamera.rotation.vy;
+    trot.vz = myCamera.rotation.vz;
+
+    myCamera.position.vx -= (((isin(trot.vy)*icos(trot.vx))>>12)*(pad.analogLeftY))>>13;
+    myCamera.position.vy += (isin(trot.vx)*(pad.analogLeftY))>>13;
+    myCamera.position.vz += (((icos(trot.vy)*icos(trot.vx))>>12)*(pad.analogLeftY))>>13;
+
+    myCamera.position.vx -= (icos(trot.vy)*(pad.analogLeftX))>>13;
+    myCamera.position.vz -= (isin(trot.vy)*(pad.analogLeftX))>>13;
+    
+
     CalculateCamera();
+
     //render all my objects
     setObjectRot(&myObjects[1],myObjects[1].rot.vx,myObjects[1].rot.vy -=fixedPointDivide(10, dt),myObjects[1].rot.vz);
-    for(int i = loadedObjects; i >= 0; i--){
+
+
+    for(int i = loadedObjects-1; i >= 0; i--){
         //setObjectRot(&myObjects[i],myObjects[i].rot.vx,myObjects[i].rot.vy -=fixedPointDivide(10, dt),myObjects[i].rot.vz);
         RenderObject(&myObjects[i]);
     }
 
     display();
+
 }
 
 void update(){

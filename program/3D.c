@@ -65,9 +65,9 @@ void CalculateCamera() {
 }
 
 void InitializeAllLights(){
-	InitializeLight(&flLights[0],0,-1,-1,-1,255,120,255);
-	InitializeLight(&flLights[1],1,1,1,1,255,120,255);
-	GsSetAmbient(0,0,0);
+	InitializeLight(&flLights[0],0,300,300,0,0,17,255);
+	InitializeLight(&flLights[1],1,300,20,300,255,0,60);
+	GsSetAmbient(255,255,255);
 }
 void InitializeLight(GsF_LIGHT *flLight, int nLight, int nX, int nY, int nZ, int nRed, int nGreen, int nBlue){
 	flLight->vx=nX;flLight->vy=nY;flLight->vz=nZ;
@@ -205,13 +205,14 @@ void start3D(){
 	SetBGColor(0, 21, 255);
 
 	//Set the color of ambient light in RGB
-	setAmbientLight(67, 67, 67);
+	//setAmbientLight(67, 67, 67);
 
 	//The sunlight color in RGB
-	setSunColor(255, 255, 255);
+	//setSunColor(255, 255, 255);
 
 	//Sunlight direction
-	setSunDirection(0, -1, 1);
+	//setSunDirection(0, -1, 1);
+	
 
 }
 

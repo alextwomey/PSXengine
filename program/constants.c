@@ -88,6 +88,7 @@ void init()
 	//0 = No Fog
 	//1 = Fog
 	GsSetLightMode(1);
+	GsSetAzwh(10, 10, 10);
 }
 
 void clear_display() {

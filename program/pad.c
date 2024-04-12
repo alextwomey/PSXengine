@@ -46,12 +46,14 @@ void updateControls(Controller_Data *con, MyPad *pad){
     read_controller( &con[0], &controllers[0].pad[0], 0 );  // Read controllers
     normalizeSticks(&con[0], pad);
     //printf("type: %d\n",con[0].type);
+    
     if(con[0].type != 115){
         pad->analogLeftX = 0;
         pad->analogRightX = 0;
         pad->analogLeftY = 0;
         pad->analogRightY = 0;
     }
+    
     switch(con[0].button1){
         case 0xDF:                      // Right 
             pad->right = 1;
@@ -150,18 +152,22 @@ void normalizeSticks(Controller_Data *con, MyPad *pad){
     ry = ry/255;
     lx = lx/255;
     ly = ly/255;
-    if(abs(rx)<=25){
+    if(abs(rx)<=40){
         rx=0;
     }else{
-        //linear interpolation between 20-128
+        rx = rx>>1;
     }
-    if(abs(ry)<=25){
+    if(abs(ry)<=40){
         ry=0;
+    }else{
+        ry = ry>>1;
     }
-    if(abs(lx)<=25){
+
+
+    if(abs(lx)<=40){
         lx=0;
     }
-    if(abs(ly)<=25){
+    if(abs(ly)<=40){
         ly=0;
     }
     pad->analogLeftX = lx;
