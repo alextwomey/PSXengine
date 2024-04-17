@@ -65,8 +65,8 @@ void CalculateCamera() {
 }
 
 void InitializeAllLights(){
-	InitializeLight(&flLights[0],0,300,300,0,0,17,255);
-	InitializeLight(&flLights[1],1,300,20,300,255,0,60);
+	InitializeLight(&flLights[0],0,451,3771,0,255* (ONE/255),0* (ONE/255),0* (ONE/255));
+	InitializeLight(&flLights[1],1,408,1512,0,0* (ONE/255),0* (ONE/255),255* (ONE/255));
 	GsSetAmbient(255,255,255);
 }
 void InitializeLight(GsF_LIGHT *flLight, int nLight, int nX, int nY, int nZ, int nRed, int nGreen, int nBlue){
@@ -101,6 +101,7 @@ void RenderObject(ModelStruct *mod) {
 	GsGetLws(mod->obj.coord2, &lmtx, &omtx);
 	GsSetLightMatrix(&lmtx);
 	GsSetLsMatrix(&omtx);
+
 
 	// Sort the object!
 	GsSortObject4(&mod->obj, &orderingTable[myActiveBuff], 1-OT_LENGTH, getScratchAddr(0));
@@ -156,6 +157,23 @@ int LoadTMD(u_long *tmd, ModelStruct *mod, int enableLighting, int loadedObj) {
 }
 
 void start3D(){
+	// Setup 3D and projection matrix
+	GsInit3D();
+	GsSetProjection(CENTERX);
+	GsInitCoordinate2(WORLD, &myCamera.coord2);
+
+	// Set default lighting mode
+	//0 = No Fog
+	//1 = Fog
+	GsSetLightMode(1);
+	
+	SetBackColor(120, 120, 120);
+	SetFarColor(120, 120, 120);
+	GsSetAzwh(10000, 10000, 10000);
+	SetFogNearFar(300,3450,45);
+
+
+
     // Load TMD models
 
 	//ObjectCount is an int defined in 3D.c
@@ -182,12 +200,12 @@ void start3D(){
 	//the V in vx, vy, and vz basically stands for Vector
 
 	//Camera
-	myCamera.position.vx = -5000;
-	myCamera.position.vy = 2500;
-	myCamera.position.vz = 5000;
+	myCamera.position.vx = 3080;
+	myCamera.position.vy = -2590;
+	myCamera.position.vz = -3356;
 
-	myCamera.rotation.vx = 400;
-	myCamera.rotation.vy = 400;
+	myCamera.rotation.vx = 0;
+	myCamera.rotation.vy = 2533;
 
 	//Car
 //	car.position.vx = 3500;
@@ -202,16 +220,16 @@ void start3D(){
 
 	//The background color of the scene
 	//in RGB (values between 0-255)
-	SetBGColor(0, 21, 255);
+	SetBGColor(120, 120, 120);
 
 	//Set the color of ambient light in RGB
-	//setAmbientLight(67, 67, 67);
+	setAmbientLight(150, 150, 150);
 
 	//The sunlight color in RGB
-	//setSunColor(255, 255, 255);
+	setSunColor(255, 255, 255);
 
 	//Sunlight direction
-	//setSunDirection(0, -1, 1);
+	setSunDirection(0, -1, 1);
 	
 
 }

@@ -27,6 +27,7 @@
             <file name="HELO.DAT"	type="data"	source="../assets/HELO.DAT"/>
             <file name="GRAD.TIM" type="data" source="../assets/GRAD.TIM"/>
             <file name="YOO.VAG" type="data" source="../assets/YOO.VAG"/>
+            <file name="NML.TMD" type="data" source="../assets/NML.TMD"/>
             <!-- Place dummy sectors at the end -->
             <dummy sectors="1024"/>
         </directory_tree>

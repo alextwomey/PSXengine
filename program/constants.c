@@ -79,16 +79,7 @@ void init()
 	FntLoad(960, 0);           // Load font to vram at 960,0(+128)
     FntOpen(-150,-100,SCREENXRES, SCREENYRES, 0, 512);
 
-	// Setup 3D and projection matrix
-	GsInit3D();
-	GsSetProjection(CENTERX);
-	GsInitCoordinate2(WORLD, &myCamera.coord2);
-
-	// Set default lighting mode
-	//0 = No Fog
-	//1 = Fog
-	GsSetLightMode(1);
-	GsSetAzwh(10, 10, 10);
+	
 }
 
 void clear_display() {
@@ -100,6 +91,9 @@ void clear_display() {
 }
 
 int fixedPointDivide(int dividend, int divisor){
+	if(divisor == 0){
+		return 0;
+	}
 	return (dividend * FIXED_POINT_FACTOR) / divisor;
 }
 
