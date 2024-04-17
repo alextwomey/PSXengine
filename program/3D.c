@@ -170,7 +170,7 @@ void start3D(){
 	SetBackColor(120, 120, 120);
 	SetFarColor(120, 120, 120);
 	GsSetAzwh(10000, 10000, 10000);
-	SetFogNearFar(300,3450,45);
+	SetFogNearFar(300,2500,45);
 
 
 
@@ -230,7 +230,7 @@ void start3D(){
 
 	//Sunlight direction
 	setSunDirection(0, -1, 1);
-	
+	printf("sun set up\n");
 
 }
 

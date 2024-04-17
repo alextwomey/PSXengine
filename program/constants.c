@@ -102,7 +102,7 @@ int getDt(){
 }
 
 void display() {
-
+	//printf("display start\n");
 	FntFlush(-1);
 	//deltaTime = VSync(1);
 	DrawSync(0);
@@ -116,5 +116,5 @@ void display() {
 	GsSortClear(BGColor.r, BGColor.g, BGColor.b, &orderingTable[myActiveBuff]);
 	GsDrawOt(&orderingTable[myActiveBuff]);
 	myActiveBuff = myActiveBuff^1;
-
+	//printf("display done\n");
 }

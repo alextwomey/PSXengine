@@ -10,7 +10,6 @@
 #include <sys/types.h>
 #include <STRINGS.H>
 #include <stdbool.h>
-#include "../third_party/isin.c"
 
 #include "constants.h"
 #include "readFromCD.h"
@@ -86,33 +85,37 @@ int main(void){
     setObjectPos(&myObjects[2], 0, 0, 0);
 
     loadTexture((u_char*)cdData[0]);
+    printf("just before starting 3d\n");
     start3D();
-    //InitializeAllLights();//just testing light sources not needed
-    
+    InitializeAllLights();//just testing light sources not needed
+    printf("just after starting 3d\n");
     loadedObjects += LoadTMD(cdData[1],&myObjects[loadedObjects],1,loadedObjects);//grid
     //loadedObjects++;
     loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi
-    loadedObjects += LoadTMD(cdData[5],&myObjects[loadedObjects],1,loadedObjects);
+    //loadedObjects += LoadTMD(cdData[5],&myObjects[loadedObjects],1,loadedObjects);
     //loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi
     //loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi
 
     VSyncCallback(vsync_cb);
-    
+    printf("all prep nominal, entering loop\n");
     while (1)  // infinite loop
     {   
         count ++;
         if(count % 60 == 0){
             seconds++;
         }
+        //printf("pre update\n");
         update();
+        //printf("pre render\n");
         render();
         fps_measure++;
+        //printf("loop complete\n");
     }
     return 0;
 }
 
 void render() {
-
+    //printf("hopping into render\n");
     clear_display();
     FntPrint("Count: %d, Seconds: %d, FPS: %d \n",count,seconds,fps);
     FntPrint("FrameTime: %d, DeltaTime: %d\n", frameTime,dt);
@@ -196,7 +199,7 @@ void render() {
     trot.vx = myCamera.rotation.vx;
     trot.vy = myCamera.rotation.vy;
     trot.vz = myCamera.rotation.vz;
-    int padmag;
+    int padmag = 0;
     int nX = 0;
     int nY = 0;
     padmag = csqrt((pad.analogLeftX*pad.analogLeftX)+(pad.analogLeftY*pad.analogLeftY))+8192;
@@ -204,10 +207,10 @@ void render() {
         nX = fixedPointDivide(pad.analogLeftX, padmag);
         nY = fixedPointDivide(pad.analogLeftY, padmag);
         
-        myCamera.position.vx -= fixedPointDivide((((isin(trot.vy)*icos(0))>>12)*(nY))>>12,dt)>>3;
-        myCamera.position.vz += fixedPointDivide((((icos(trot.vy)*icos(0))>>12)*(nY))>>12,dt)>>3;
-        myCamera.position.vx -= fixedPointDivide((icos(trot.vy)*(nX))>>12,dt)>>3;
-        myCamera.position.vz -= fixedPointDivide((isin(trot.vy)*(nX))>>12,dt)>>3;  
+        myCamera.position.vx -= fixedPointDivide((((csin(trot.vy)*ccos(0))>>12)*(nY))>>12,dt)>>3;
+        myCamera.position.vz += fixedPointDivide((((ccos(trot.vy)*ccos(0))>>12)*(nY))>>12,dt)>>3;
+        myCamera.position.vx -= fixedPointDivide((ccos(trot.vy)*(nX))>>12,dt)>>3;
+        myCamera.position.vz -= fixedPointDivide((csin(trot.vy)*(nX))>>12,dt)>>3;  
     }
     //free flight up and down y axis
     //myCamera.position.vy += fixedPointDivide((isin(trot.vx)*(pad.analogLeftY))>>13,dt);
