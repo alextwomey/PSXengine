@@ -20,6 +20,22 @@ GsOT orderingTable[2];
 GsOT_TAG orderingTable_TAG[2][OT_ENTRIES];
 PACKET GPUOutputPacket[2][PACKETMAX*24];
 Camera myCamera;
+int vsyncInterval;
+int fps = 60;
+int fps_counter;
+int fps_measure;
+int frameTime;
+int dt;
+
+void vsync_cb(){
+	fps_counter++;
+	if(fps_counter >= 60){
+		fps = fps_measure;
+		fps_measure = 0;
+		fps_counter = 0;
+	}
+}
+
 //Creates a color from RGB
 Color createColor(int r, int g, int b) {
 	Color color = {.r = r, .g = g, .b = b};
@@ -37,6 +53,8 @@ void initMyHeap(){
 
 void init()
 {
+	vsyncInterval = 0;
+	GsInitVcount();
 	#ifdef _release_
 	printf("***RELEASE MODE***\n");
 	#else
@@ -59,17 +77,9 @@ void init()
 	GsClearOt(0, 0, &orderingTable[1]);
 	
 	FntLoad(960, 0);           // Load font to vram at 960,0(+128)
-    FntOpen(-120,0,SCREENXRES, SCREENYRES, 0, 512);
+    FntOpen(-150,-100,SCREENXRES, SCREENYRES, 0, 512);
 
-	// Setup 3D and projection matrix
-	GsInit3D();
-	GsSetProjection(CENTERX);
-	GsInitCoordinate2(WORLD, &myCamera.coord2);
-
-	// Set default lighting mode
-	//0 = No Fog
-	//1 = Fog
-	GsSetLightMode(1);
+	
 }
 
 void clear_display() {
@@ -80,16 +90,31 @@ void clear_display() {
 
 }
 
+int fixedPointDivide(int dividend, int divisor){
+	if(divisor == 0){
+		return 0;
+	}
+	return (dividend * FIXED_POINT_FACTOR) / divisor;
+}
+
+int getDt(){
+	return dt = fixedPointDivide(fps, 60);
+}
+
 void display() {
-
+	//printf("display start\n");
 	FntFlush(-1);
-
+	//deltaTime = VSync(1);
 	DrawSync(0);
-	VSync(0);
+	//VSync(0);
+	
+	frameTime = VSync(0);
+	
 	GsSwapDispBuff();
 	//the first 3 numbers are the background color
 	//was 0, 64, 0
 	GsSortClear(BGColor.r, BGColor.g, BGColor.b, &orderingTable[myActiveBuff]);
 	GsDrawOt(&orderingTable[myActiveBuff]);
 	myActiveBuff = myActiveBuff^1;
+	//printf("display done\n");
 }

@@ -9,6 +9,7 @@ program/readFromCD.c \
 program/2D.c \
 program/pad.c \
 program/SPU.c \
+program/3D.c  \
 
 CPPFLAGS += -Ithird_party/psyq-iwyu/include
 LDFLAGS += -Lthird_party/psyq/lib

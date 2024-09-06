@@ -27,6 +27,10 @@
             <file name="HELO.DAT"	type="data"	source="../assets/HELO.DAT"/>
             <file name="GRAD.TIM" type="data" source="../assets/GRAD.TIM"/>
             <file name="YOO.VAG" type="data" source="../assets/YOO.VAG"/>
+            <file name="NML.TMD" type="data" source="../assets/NML.TMD"/>
+            <file name="0_COME.VAG" type="data" source="../assets/0_COME.VAG"/>
+            <file name="1_CUEK.VAG" type="data" source="../assets/1_CUEK.VAG"/>
+            <file name="2_ERRO.VAG" type="data" source="../assets/2_ERRO.VAG"/>
             <!-- Place dummy sectors at the end -->
             <dummy sectors="1024"/>
         </directory_tree>
