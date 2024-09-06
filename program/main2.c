@@ -53,11 +53,11 @@ int main(void){
     readFromCd("GRAD.TIM",&cdData[4]);
     
     //readFromCd("YOO.VAG",&cdData[5]);
-    //readFromCd("0_COME.VAG",&cdData[6]);
-    //readFromCd("1_CUEK.VAG",&cdData[7]);
-   // readFromCd("2_ERRO.VAG",&cdData[8]);
+    //readFromCd("0_come.vag",&cdData[6]);
+    //readFromCd("1_cuek.vag",&cdData[7]);
+    //readFromCd("2_erro.vag",&cdData[8]);
     initCDAudio();
-    playMusicFromCD(2);
+    //playMusicFromCD(2);
     
     //soundBank[0]= createVAGsound((u_char*)cdData[5],SPU_00CH,0);
     //soundBank[1]= createVAGsound((u_char*)cdData[6],SPU_01CH,0);
@@ -142,9 +142,79 @@ void render() {
     //setObjectRot(&myObjects[3],myObjects[3].rot.vx,myObjects[3].rot.vy -=10,myObjects[3].rot.vz);
     setObjectRot(&myObjects[2],myObjects[2].rot.vx,myObjects[2].rot.vy -=10,myObjects[2].rot.vz);
     
-    do_controls(cdData,myObjects, &myCamera,&pad,&loadedObjects,&defX,&defY,&defZ);
+    if(pad.left){
+        if(!pad.prevLeft){
+            loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi
+            setObjectPos(&myObjects[loadedObjects],defX+(loadedObjects*100),defY+(loadedObjects*100),defZ+(loadedObjects*100));
+            setObjectSca(&myObjects[loadedObjects],1700,1700,1700);
+            playSFX(&soundBank[0]);
+        }
+        pad.prevLeft = true;
+    }
+    if(!pad.left){
+        pad.prevLeft = false;
+    }
+    if(pad.down){
+        setObjectSca(&myObjects[1],myObjects[1].sca.vx-=fixedPointDivide(10, dt),myObjects[1].sca.vy-=fixedPointDivide(10, dt),myObjects[1].sca.vz-=fixedPointDivide(10, dt));
+        if(!pad.prevDown){
+            playSFX(&soundBank[2]);
+        }
+        pad.prevDown = true;
+    }
+    if(!pad.down){
+        pad.prevDown = false;
+    }
+    if(pad.right){
+        if(!pad.prevright){
+            playSFX(&soundBank[3]);
+        }
+        pad.prevright = true;
+    }
+    if(!pad.right){
+        pad.prevright = false;
+    }
+    if(pad.up){
+        setObjectSca(&myObjects[1],myObjects[1].sca.vx+=fixedPointDivide(10, dt),myObjects[1].sca.vy+=fixedPointDivide(10, dt),myObjects[1].sca.vz+=fixedPointDivide(10, dt));
+        if(!pad.prevUp){
+            playSFX(&soundBank[1]);
+        }
+        pad.prevUp = true;
+    }
+    if(!pad.up){
+        pad.prevUp = false;
+    }
 
-   
+    //rotation of camera
+    myCamera.rotation.vy -= fixedPointDivide((pad.analogRightY)>>2, dt);
+    if(myCamera.rotation.vx > 1000){
+        myCamera.rotation.vx = 1000;
+    }
+    if(myCamera.rotation.vx < -1000){
+        myCamera.rotation.vx = -1000;
+    }
+    myCamera.rotation.vx += fixedPointDivide((pad.analogRightX)>>2, dt);
+
+    //camera position
+    SVECTOR trot;
+    trot.vx = myCamera.rotation.vx;
+    trot.vy = myCamera.rotation.vy;
+    trot.vz = myCamera.rotation.vz;
+    int padmag = 0;
+    int nX = 0;
+    int nY = 0;
+    padmag = csqrt((pad.analogLeftX*pad.analogLeftX)+(pad.analogLeftY*pad.analogLeftY))+8192;
+    if(padmag !=0){
+        nX = fixedPointDivide(pad.analogLeftX, padmag);
+        nY = fixedPointDivide(pad.analogLeftY, padmag);
+        
+        myCamera.position.vx -= fixedPointDivide((((csin(trot.vy)*ccos(0))>>12)*(nY))>>12,dt)>>3;
+        myCamera.position.vz += fixedPointDivide((((ccos(trot.vy)*ccos(0))>>12)*(nY))>>12,dt)>>3;
+        myCamera.position.vx -= fixedPointDivide((ccos(trot.vy)*(nX))>>12,dt)>>3;
+        myCamera.position.vz -= fixedPointDivide((csin(trot.vy)*(nX))>>12,dt)>>3;  
+    }
+    //free flight up and down y axis
+    //myCamera.position.vy += fixedPointDivide((isin(trot.vx)*(pad.analogLeftY))>>13,dt);
+
     CalculateCamera();
 
     //render all my objects

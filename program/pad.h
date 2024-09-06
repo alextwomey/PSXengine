@@ -4,6 +4,8 @@
 #include <libetc.h>
 #include <libapi.h>
 #include <stdbool.h>
+#include "3D.h"
+#include "SPU.h"
 // hello_libpad example
 //
 // We're using libpad this time.
@@ -32,6 +34,11 @@ typedef struct
 {
     unsigned char pad[34];          // 8-bytes w/o Multi-Tap, 34-bytes w/Multi-Tap
 } Controller_Buffer;
+
+extern SVECTOR trot;
+extern int padmag;
+extern int nX;
+extern int nY;
 
 typedef struct{
     bool left;
@@ -85,4 +92,4 @@ void get_digital_direction( Controller_Data *c, int buttondata ); // get analog 
 void initializePad(void);
 void updateControls(Controller_Data *con, MyPad *pad);
 void normalizeSticks(Controller_Data *con, MyPad *pad);
-
+void do_controls(long** cdData, ModelStruct* myObjects, Camera* myCamera,MyPad* pad, int* loadedObjects,int* defX, int* defY, int* defZ);

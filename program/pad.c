@@ -15,10 +15,147 @@
 
 Controller_Buffer controllers[2];
 Controller_Data theControllers[8];
+//camera position
+SVECTOR trot;
+int padmag;
+int nX;
+int nY;
 
 void initializePad(){
 	InitPAD(controllers[0].pad, 34, controllers[1].pad, 34);
     StartPAD();
+}
+
+void do_controls(long** cdData, ModelStruct* myObjects, Camera* myCamera,MyPad* pad, int* loadedObjects, int* defX, int* defY, int* defZ){
+    //X BUTTON A BUTTON
+    if(pad->x){
+        myCamera->position.vy += 120;
+        if(!pad->prevX){
+            //do x button stuff on first press
+            //myCamera.position.vy += fixedPointDivide((isin(trot.vx)*(pad.analogLeftY))>>13,dt);
+            
+        }
+        pad->prevX = true;
+    }
+    if(!pad->x){
+        pad->prevX = false;
+    }
+    //CIRCLE BUTTON B BUTTON
+    if(pad->c){
+        myCamera->position.vy -= 120;
+        if(!pad->prevC){
+            //do x button stuff on first press
+            //myCamera.position.vy += fixedPointDivide((isin(trot.vx)*(pad.analogLeftY))>>13,dt);
+            
+        }
+        pad->prevC = true;
+    }
+    if(!pad->c){
+        pad->prevC = false;
+    }
+    //SQUARE BUTTON X BUTTON
+    if(pad->s){
+        myCamera->position.vy -= 120;
+        if(!pad->prevS){
+            //do x button stuff on first press
+            //myCamera.position.vy += fixedPointDivide((isin(trot.vx)*(pad.analogLeftY))>>13,dt);
+            
+        }
+        pad->prevS = true;
+    }
+    if(!pad->s){
+        pad->prevS = false;
+    }
+    //TRIANGLE BUTTON Y BUTTON
+    if(pad->t){
+        myCamera->position.vy -= 120;
+        if(!pad->prevT){
+            //do x button stuff on first press
+            //myCamera.position.vy += fixedPointDivide((isin(trot.vx)*(pad.analogLeftY))>>13,dt);
+            
+        }
+        pad->prevT = true;
+    }
+    if(!pad->t){
+        pad->prevT = false;
+    }
+    //DPAD LEFT
+    if(pad->left){
+        if(!pad->prevLeft){
+            *loadedObjects += LoadTMD(cdData[2],&myObjects[*loadedObjects],1,*loadedObjects);//yoshi
+            setObjectPos(&myObjects[*loadedObjects],*defX+(*loadedObjects*100),*defY+(*loadedObjects*100),*defZ+(*loadedObjects*100));
+            setObjectSca(&myObjects[*loadedObjects],1700,1700,1700);
+            playSFX(&soundBank[0]);
+        }
+        pad->prevLeft = true;
+    }
+    if(!pad->left){
+        pad->prevLeft = false;
+    }
+    //DPAD DOWN
+    if(pad->down){
+        setObjectSca(&myObjects[1],myObjects[1].sca.vx-=fixedPointDivide(10, dt),myObjects[1].sca.vy-=fixedPointDivide(10, dt),myObjects[1].sca.vz-=fixedPointDivide(10, dt));
+        if(!pad->prevDown){
+            playSFX(&soundBank[2]);
+        }
+        pad->prevDown = true;
+    }
+    if(!pad->down){
+        pad->prevDown = false;
+    }
+    //DPAD RIGHT
+    if(pad->right){
+        if(!pad->prevright){
+            playSFX(&soundBank[3]);
+        }
+        pad->prevright = true;
+    }
+    if(!pad->right){
+        pad->prevright = false;
+    }
+    //DPAD UP
+    if(pad->up){
+        setObjectSca(&myObjects[1],myObjects[1].sca.vx+=fixedPointDivide(10, dt),myObjects[1].sca.vy+=fixedPointDivide(10, dt),myObjects[1].sca.vz+=fixedPointDivide(10, dt));
+        if(!pad->prevUp){
+            playSFX(&soundBank[1]);
+        }
+        pad->prevUp = true;
+    }
+    if(!pad->up){
+        pad->prevUp = false;
+    }
+
+    //rotation of camera
+    myCamera->rotation.vy -= fixedPointDivide((pad->analogRightY)>>2, dt);
+    if(myCamera->rotation.vx > 1000){
+        myCamera->rotation.vx = 1000;
+    }
+    if(myCamera->rotation.vx < -1000){
+        myCamera->rotation.vx = -1000;
+    }
+    myCamera->rotation.vx += fixedPointDivide((pad->analogRightX)>>2, dt);
+
+    //camera position
+    //trot;
+    trot.vx = myCamera->rotation.vx;
+    trot.vy = myCamera->rotation.vy;
+    trot.vz = myCamera->rotation.vz;
+    padmag = 0;
+    nX = 0;
+    nY = 0;
+    padmag = csqrt((pad->analogLeftX*pad->analogLeftX)+(pad->analogLeftY*pad->analogLeftY))+8192;
+    if(padmag !=0){
+        nX = fixedPointDivide(pad->analogLeftX, padmag);
+        nY = fixedPointDivide(pad->analogLeftY, padmag);
+        
+        myCamera->position.vx -= fixedPointDivide((((csin(trot.vy)*ccos(0))>>12)*(nY))>>12,dt)>>3;
+        myCamera->position.vz += fixedPointDivide((((ccos(trot.vy)*ccos(0))>>12)*(nY))>>12,dt)>>3;
+        myCamera->position.vx -= fixedPointDivide((ccos(trot.vy)*(nX))>>12,dt)>>3;
+        myCamera->position.vz -= fixedPointDivide((csin(trot.vy)*(nX))>>12,dt)>>3;  
+    }
+    //free flight up and down y axis
+    //myCamera.position.vy += fixedPointDivide((isin(trot.vx)*(pad.analogLeftY))>>13,dt);
+
 }
 
 
