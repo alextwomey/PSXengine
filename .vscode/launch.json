@@ -10,7 +10,7 @@
       "cwd": "${workspaceRoot}",
       "valuesFormatting": "parseText",
       "stopAtConnect": true,
-      "gdbpath": "gdb-multiarch",
+      "gdbpath": "gdb",
       "windows": {
         "gdbpath": "gdb-multiarch.exe"
       },
@@ -34,7 +34,7 @@
       "cwd": "${workspaceRoot}",
       "valuesFormatting": "parseText",
       "stopAtConnect": true,
-      "gdbpath": "gdb-multiarch",
+      "gdbpath": "gdb",
       "windows": {
         "gdbpath": "gdb-multiarch.exe"
       },

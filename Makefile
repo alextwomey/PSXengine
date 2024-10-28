@@ -38,5 +38,6 @@ LDFLAGS += -lspu
 LDFLAGS += -ltap
 LDFLAGS += -Wl,--end-group
 LDFLAGS += -lgcc
+CFLAGS += -fpermissive
 
 include third_party/nugget/common.mk

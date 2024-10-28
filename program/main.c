@@ -1,14 +1,14 @@
-#include <STDLIB.H>
-#include <STDIO.H>
-#include <LIBGTE.H>
-#include <LIBGPU.H>
-#include <LIBGS.H>
-#include <LIBETC.H>
-#include <LIBSPU.H>
-#include <LIBDS.H>
-#include <LIBCD.H>
+#include <stdlib.h>
+#include <stdio.h>
+#include <libgte.h>
+#include <libgpu.h>
+#include <libgs.h>
+#include <libetc.h>
+#include <libspu.h>
+#include <libds.h>
+#include <libcd.h>
 #include <sys/types.h>
-#include <STRINGS.H>
+#include <strings.h>
 #include <stdbool.h>
 
 #include "constants.h"
@@ -52,17 +52,17 @@ int main(void){
     //readFromCd("HELO.DAT",&cdData[3]);
     readFromCd("GRAD.TIM",&cdData[4]);
     
-    //readFromCd("YOO.VAG",&cdData[5]);
-    //readFromCd("0_COME.VAG",&cdData[6]);
-    //readFromCd("1_CUEK.VAG",&cdData[7]);
-   // readFromCd("2_ERRO.VAG",&cdData[8]);
+    readFromCd("YOO.VAG",&cdData[5]);
+    readFromCd("0_COME.VAG",&cdData[6]);
+    readFromCd("1_CUEK.VAG",&cdData[7]);
+    readFromCd("2_ERRO.VAG",&cdData[8]);
     initCDAudio();
     playMusicFromCD(2);
     
-    //soundBank[0]= createVAGsound((u_char*)cdData[5],SPU_00CH,0);
-    //soundBank[1]= createVAGsound((u_char*)cdData[6],SPU_01CH,0);
-    //soundBank[2]= createVAGsound((u_char*)cdData[7],SPU_02CH,0);
-    //soundBank[3]= createVAGsound((u_char*)cdData[8],SPU_03CH,0);
+    soundBank[0]= createVAGsound((u_char*)cdData[5],SPU_00CH,0);
+    soundBank[1]= createVAGsound((u_char*)cdData[6],SPU_01CH,0);
+    soundBank[2]= createVAGsound((u_char*)cdData[7],SPU_02CH,0);
+    soundBank[3]= createVAGsound((u_char*)cdData[8],SPU_03CH,0);
     for(int i = 0; i < 4; i++){
         soundBank[i].spu_address = loadVag(&soundBank[i]);
         printf("Address: %lu, channel: %lu\n",soundBank[i].spu_address,soundBank[i].spu_channel);

@@ -1,6 +1,6 @@
 #pragma once
 #include <libgs.h>
-#include <STDLIB.H>
+#include <stdlib.h>
 
 #define Sprite GsSPRITE
 #define ROT_ONE 4096

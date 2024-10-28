@@ -6,7 +6,7 @@
 #include <libcd.h>
 #include <malloc.h>
 #include <stdio.h>
-#include <STRINGS.H>
+#include <strings.h>
 #include"../third_party/pcdrv.h"
 //
 

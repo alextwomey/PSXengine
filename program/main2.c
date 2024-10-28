@@ -1,14 +1,14 @@
-#include <STDLIB.H>
-#include <STDIO.H>
-#include <LIBGTE.H>
-#include <LIBGPU.H>
-#include <LIBGS.H>
-#include <LIBETC.H>
-#include <LIBSPU.H>
-#include <LIBDS.H>
-#include <LIBCD.H>
+#include <stdlib.h>
+#include <stdio.h>
+#include <libgte.h>
+#include <libgpu.h>
+#include <libgs.h>
+#include <libetc.h>
+#include <libspu.h>
+#include <libds.h>
+#include <libcd.h>
 #include <sys/types.h>
-#include <STRINGS.H>
+#include <strings.h>
 #include <stdbool.h>
 
 #include "constants.h"

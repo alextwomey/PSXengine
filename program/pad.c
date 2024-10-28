@@ -26,7 +26,7 @@ void initializePad(){
     StartPAD();
 }
 
-void do_controls(long** cdData, ModelStruct* myObjects, Camera* myCamera,MyPad* pad, int* loadedObjects, int* defX, int* defY, int* defZ){
+void do_controls(long** cdData, ModelStruct* myObjects, Camera* myCamera, MyPad* pad, int* loadedObjects, int* defX, int* defY, int* defZ){
     //X BUTTON A BUTTON
     if(pad->x){
         myCamera->position.vy += 120;

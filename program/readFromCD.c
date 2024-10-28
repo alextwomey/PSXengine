@@ -4,7 +4,7 @@
 #include <libcd.h>
 #include <malloc.h>
 #include <stdio.h>
-#include <STRINGS.H>
+#include <strings.h>
 #include "readFromCD.h"
 #include "constants.h"
 

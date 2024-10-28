@@ -1,6 +1,6 @@
 #pragma once
 #include <libgs.h>
-#include <STDLIB.H>
+#include <stdlib.h>
 #include "constants.h"
 
 // Maximum number of objects
