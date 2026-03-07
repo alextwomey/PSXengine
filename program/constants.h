@@ -11,13 +11,11 @@
 #include <sys/types.h>
 #include <strings.h>
 
-
 //**********************
 //Release def (switches cd read and pcdrv read)
 //**********************
-#define _release_
+//#define _release_
 //**********************
-
 
 #define VMODE 0                 // Video Mode : 0 : NTSC, 1: PAL
 #define SCREENXRES 320          // Screen width
@@ -34,7 +32,6 @@
 #define PACKETMAX	2048
 #define FRACTIONAL_BITS 16
 #define FIXED_POINT_FACTOR (1 << FRACTIONAL_BITS)
-
 
 extern DISPENV disp[2];                 // Double buffered DISPENV and DRAWENV
 extern DRAWENV draw[2];

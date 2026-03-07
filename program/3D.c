@@ -60,14 +60,13 @@ void CalculateCamera() {
 	sunLight[0].vz = sunDirection.vz;
 
 	sunLight[0].r =	sunColor.r;	sunLight[0].g = sunColor.g;	sunLight[0].b = sunColor.b;
-	GsSetFlatLight(0, &sunLight[0]);
+	//GsSetFlatLight(0, &sunLight[0]);
 
 }
 
 void InitializeAllLights(){
 	InitializeLight(&flLights[0],0,451,3771,0,255* (ONE/255),0* (ONE/255),0* (ONE/255));
 	InitializeLight(&flLights[1],1,408,1512,0,0* (ONE/255),0* (ONE/255),255* (ONE/255));
-	GsSetAmbient(255,255,255);
 }
 void InitializeLight(GsF_LIGHT *flLight, int nLight, int nX, int nY, int nZ, int nRed, int nGreen, int nBlue){
 	flLight->vx=nX;flLight->vy=nY;flLight->vz=nZ;
@@ -78,6 +77,8 @@ void InitializeLight(GsF_LIGHT *flLight, int nLight, int nX, int nY, int nZ, int
 void RenderObject(ModelStruct *mod) {
 
 	MATRIX lmtx,omtx;
+	//lmtx is local world coords
+	//omtx is local screen coords
 	GsCOORDINATE2 coord;
 
 	// Copy the camera (base) matrix for the model
@@ -99,7 +100,7 @@ void RenderObject(ModelStruct *mod) {
 
 	// Calculate Local-World (for lighting) and Local-Screen (for projection) matrices and set both to the GTE
 	GsGetLws(mod->obj.coord2, &lmtx, &omtx);
-	GsSetLightMatrix(&lmtx);
+	GsSetLightMatrix(&omtx);
 	GsSetLsMatrix(&omtx);
 
 
@@ -162,42 +163,7 @@ void start3D(){
 	GsSetProjection(CENTERX);
 	GsInitCoordinate2(WORLD, &myCamera.coord2);
 
-	// Set default lighting mode
-	//0 = No Fog
-	//1 = Fog
-	GsSetLightMode(1);
-	
-	SetBackColor(120, 120, 120);
-	SetFarColor(120, 120, 120);
-	GsSetAzwh(10000, 10000, 10000);
-	SetFogNearFar(300,2500,45);
 
-
-
-    // Load TMD models
-
-	//ObjectCount is an int defined in 3D.c
-	//Every time we load a model, we increment this number.
-	//Sometimes a TMD model will have more than one model
-	//in the file so the LoadTMD function will return the
-	//number of objects it found in whatever TMD file you loaded.
-
-	//The LoadTMD function loads a TMD model, and stores
-	//it in the Object variable defined in 3D.c
-
-	//LoadTMD(
-    //    the TMD Model to load,
-    //    The Object variable to store the TMD model in,
-    //    Lighting on=1 off=0
-    //);
-
-	
-	//ObjectCount += LoadTMD(cdData[2], &Object[1], 0); /* Cube */
-
-	//Set all the initial starting positions and
-	//rotations here for every loaded object
-
-	//the V in vx, vy, and vz basically stands for Vector
 
 	//Camera
 	myCamera.position.vx = 3080;
@@ -207,29 +173,37 @@ void start3D(){
 	myCamera.rotation.vx = 0;
 	myCamera.rotation.vy = 2533;
 
-	//Car
-//	car.position.vx = 3500;
-//	car.position.vy = 924;
-//	car.position.vz = -3500;
-
-//	car.rotation.vy = 900;
 
 	/////////////////////////////////////////////
 	////    Setup the scene lighting here    ////
 	/////////////////////////////////////////////
 
+	// Set default lighting mode
+	//0 = No Fog
+	//1 = Fog
+	GsSetLightMode(1);
+	
+	SetBackColor(255, 255, 255);
+
+	SetBGColor(22, 184, 153);
+	SetFarColor(22, 184, 153);
+
+	GsSetAzwh(1, 2, 2);
+
+	SetFogFar(7999,100);
+
 	//The background color of the scene
 	//in RGB (values between 0-255)
-	SetBGColor(120, 120, 120);
+
 
 	//Set the color of ambient light in RGB
-	setAmbientLight(150, 150, 150);
+	setAmbientLight(200, 65, 200);
 
 	//The sunlight color in RGB
-	setSunColor(255, 255, 255);
+	setSunColor(255, 9, 29);
 
 	//Sunlight direction
-	setSunDirection(0, -1, 1);
+	setSunDirection(0, -1, 0);
 	printf("sun set up\n");
 
 }

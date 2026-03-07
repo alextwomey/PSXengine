@@ -82,9 +82,9 @@ void do_controls(long** cdData, ModelStruct* myObjects, Camera* myCamera, MyPad*
     //DPAD LEFT
     if(pad->left){
         if(!pad->prevLeft){
-            *loadedObjects += LoadTMD(cdData[2],&myObjects[*loadedObjects],1,*loadedObjects);//yoshi
-            setObjectPos(&myObjects[*loadedObjects],*defX+(*loadedObjects*100),*defY+(*loadedObjects*100),*defZ+(*loadedObjects*100));
-            setObjectSca(&myObjects[*loadedObjects],1700,1700,1700);
+            //*loadedObjects += LoadTMD(cdData[2],&myObjects[*loadedObjects],1,*loadedObjects);//yoshi
+            //setObjectPos(&myObjects[*loadedObjects],*defX+(*loadedObjects*100),*defY+(*loadedObjects*100),*defZ+(*loadedObjects*100));
+            //setObjectSca(&myObjects[*loadedObjects],1700,1700,1700);
             playSFX(&soundBank[0]);
         }
         pad->prevLeft = true;

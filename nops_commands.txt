@@ -1,0 +1,7 @@
+./nops /debug
+
+./nops /exe ~/PSX/PSXengine/psxeg.ps-exe /m
+
+./nops /reset
+
+./nops /slow /gdb 127.0.0.1:3333 /dev/ttyUSB0
