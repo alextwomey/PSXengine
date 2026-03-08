@@ -43,9 +43,12 @@ int main(void){
     SPUInitialization();
     initCD();
 
-    readFromCd("YOSHI.TIM",&cdData[0]);
-    readFromCd("GRID.TMD",&cdData[1]);
-    readFromCd("YOSHI.TMD",&cdData[2]);
+    readFromCd("GRID.TMD",&cdData[0]);
+    readFromCd("YOSHI.TMD",&cdData[1]);
+    readFromCd("YOSHI.TIM",&cdData[2]);
+    readFromCd("PUMPY.TMD",&cdData[3]);
+    readFromCd("PUMPY.TIM",&cdData[4]);
+
     //readFromCd("HELO.DAT",&cdData[3]);
     //readFromCd("GRAD.TIM",&cdData[4]);
     
@@ -74,14 +77,15 @@ int main(void){
 ;
 
 
-    loadTexture((u_char*)cdData[0]);
+    loadTexture((u_char*)cdData[2]);
+    loadTexture((u_char*)cdData[4]);
     printf("just before starting 3d\n");
     start3D();
     InitializeAllLights();//just testing light sources not needed
     printf("just after starting 3d\n");
-    loadedObjects += LoadTMD(cdData[1],&myObjects[loadedObjects],1,loadedObjects);//grid
-    loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi
-    loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi other
+    loadedObjects += LoadTMD(cdData[0],&myObjects[loadedObjects],1,loadedObjects);//grid
+    loadedObjects += LoadTMD(cdData[1],&myObjects[loadedObjects],0,loadedObjects);//yoshi
+    loadedObjects += LoadTMD(cdData[3],&myObjects[loadedObjects],0,loadedObjects);//pumpy
     //loadedObjects += LoadTMD(cdData[5],&myObjects[loadedObjects],1,loadedObjects);
     //loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi
     //loadedObjects += LoadTMD(cdData[2],&myObjects[loadedObjects],1,loadedObjects);//yoshi
@@ -92,7 +96,7 @@ int main(void){
     //yoshi
     setObjectPos(&myObjects[1],-1182,2350,1453);
     setObjectSca(&myObjects[1],1700,1700,1700);
-    //yoshi
+    //pumpy
     setObjectPos(&myObjects[2],0,2350,1453);
     setObjectSca(&myObjects[2],1700,1700,1700);
     //i dunno
